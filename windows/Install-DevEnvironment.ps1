@@ -44,7 +44,7 @@ function Install-WindowsTerminal {
             Write-Host "Overwriting settings.json file..."
             $settingsJsonUrl = "https://raw.githubusercontent.com/Dwarf1er/dotfiles/master/windows/windows-terminal/settings.json"
             $settingsJsonFilePath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-            Invoke-WebRequest -Uri $settingsJsonUrl -OutFile $settingsJsonFilePath -WebSession $Session -ErrorAction Stop
+            Invoke-WebRequest -Uri $settingsJsonUrl -OutFile $settingsJsonFilePath -WebSession $Session
             Write-Host "Settings.json file overwritten."
 
         } catch {
@@ -74,7 +74,7 @@ function Install-FiraCodeNerdFont {
         }
         $url = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
 		$outputPath += "\FiraCodeNerdFontMono-Regular.ttf"
-        Invoke-WebRequest -Uri $url -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+        Invoke-WebRequest -Uri $url -OutFile $outputPath -WebSession $Session
 		
 		$destination = (New-Object -ComObject Shell.Application).Namespace(0x14)
 		$destination.CopyHere($outputPath, 0x10)
@@ -170,10 +170,10 @@ function Install-MinGW {
         $downloadUrl = ($hrefTitleDict.GetEnumerator() | Where-Object { $_.Value -eq "x86_64-posix-seh" }).Key[0]
         $fileName = "mingw.7z"
         $outputPath = "$env:TEMP\$fileName"
-        Invoke-WebRequest -UserAgent "Wget/1.24.5" -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+        Invoke-WebRequest -UserAgent "Wget/1.24.5" -Uri $downloadUrl -OutFile $outputPath -WebSession $Session
 
         Install-Module -Scope CurrentUser -Name 7Zip4Powershell -ErrorAction Stop
-        Expand-7Zip -ArchiveFileName $outputPath -TargetPath "$env:LOCALAPPDATA\Programs" -ErrorAction Stop
+        Expand-7Zip -ArchiveFileName $outputPath -TargetPath "$env:LOCALAPPDATA\Programs"
         Write-Host "MinGW installed."
     } catch {
         Write-Host "An error occurred: $_"
@@ -219,7 +219,7 @@ function Install-Neovim {
         $fileName = "nvim-win64.zip"
         $downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
         $outputPath = "$env:TEMP\$fileName"
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session
         Expand-Archive -Path $outputPath -Destination "$env:LOCALAPPDATA\Programs" -Force
         Rename-Item -Path "$env:LOCALAPPDATA\Programs\nvim-win64" -NewName $neovimDirectory -Force
         Write-Host "Neovim installed."
@@ -228,7 +228,7 @@ function Install-Neovim {
         $url = "https://github.com/Dwarf1er/dotfiles/archive/refs/heads/master.zip"
         $fileName = "master.zip"
         $outputPath = "$env:TEMP\$fileName"
-        Invoke-WebRequest -Uri $url -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+        Invoke-WebRequest -Uri $url -OutFile $outputPath -WebSession $Session
         Expand-Archive -Path $outputPath -Destination "$env:TEMP" -Force
         Copy-Item -Path "$env:TEMP\dotfiles-master\.config\nvim" -Destination "$env:LOCALAPPDATA" -Recurse -Force
         Write-Host "Neovim config files downloaded."
@@ -263,7 +263,7 @@ function Install-Git {
         $fileName = "Git-" + $version.Substring(0,6) + "-64-bit.exe"
         $downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
         $outputPath = "$env:TEMP\$fileName"
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session
 		$gitOptions = @"
 [Setup]
 Lang=default
