@@ -51,7 +51,7 @@ function Install-WindowsTerminal {
             Write-Host "An error occurred: $_"
             Write-Host "Failed to install Windows Terminal."
         } finally {
-			if (Test-Path -Path $outputPath) {
+			if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
 				Remove-Item $outputPath -Force
 			}
         }
@@ -84,7 +84,7 @@ function Install-FiraCodeNerdFont {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install FiraCode NerdFont."
     } finally {
-		if (Test-Path -Path $outputPath) {
+		if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
 			Remove-Item $outputPath -Force
 		}
 	}
@@ -123,7 +123,7 @@ function Install-OhMyPosh {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install Oh My Posh."
     } finally {
-		if (Test-Path -Path $outputPath) {
+		if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
 			Remove-Item $outputPath -Force
 		}
     }
@@ -179,7 +179,7 @@ function Install-MinGW {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install MinGW."
     } finally {
-        if (Test-Path -Path $outputPath) {
+        if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
             Remove-Item $outputPath -Force
         }
     }
@@ -205,7 +205,8 @@ function Install-Neovim {
         }
         if (Test-Path -Path $neovimDataDirectory) {
             Write-Host "Removing existing Neovim data..."
-            Remove-Item $neovimDataDirectory -Recurse -Force
+	    # Remove-Item is still broken when there are symbolic links, see: https://github.com/powershell/powershell/issues/621
+            cmd /c rmdir /s /q $neovimDataDirectory
             Write-Host "Existing Neovim data removed."
         }
 
@@ -239,7 +240,7 @@ function Install-Neovim {
 		if(Test-Path -Path "$env:TEMP\nvim-win64.zip") {
 			Remove-Item "$env:TEMP\nvim-win64.zip" -Force
 		}
-        if (Test-Path -Path $outputPath) {
+        if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
             Remove-Item $outputPath -Force
         }
         if (Test-Path -Path "$env:TEMP\dotfiles-master") {
@@ -296,7 +297,7 @@ EnableFSMonitor=Disabled
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install Git."
     } finally {
-        if (Test-Path -Path $outputPath) {
+        if ($outputPath -ne $null -and (Test-Path -Path $outputPath)) {
             Remove-Item $outputPath -Force
         }
 		if (Test-Path -Path "$env:TEMP\git_options.ini") {
