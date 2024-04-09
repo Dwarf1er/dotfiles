@@ -1,4 +1,3 @@
-# Main logic of the install script
 function Main {
 	Write-Host "Starting installation process..."
 	$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
@@ -12,16 +11,14 @@ function Main {
 	Install-Git -Session $session
 	New-PowerShellProfile
 	
-	$session.Dispose()
 	Write-Host "Installation process done."
 }
 
-# Install Windows Terminal
 function Install-WindowsTerminal {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
     )
-    if (!(Get-AppxPackage -Name Microsoft.WindowsTerminal)) {
+    if (-not (Get-AppxPackage -Name Microsoft.WindowsTerminal)) {
         Write-Host "Windows Terminal is not installed. Installing..."
         try {
             $url = "https://github.com/microsoft/terminal/releases/latest/"
@@ -30,21 +27,20 @@ function Install-WindowsTerminal {
             $tagUrl = $response.ResponseUri.OriginalString
 			$response.Dispose()
             $version = $tagUrl.Split("/")[-1].Trim("v")
-            $fileName = "Microsoft.WindowsTerminal_$version_8wekyb3d8bbwe.msixbundle"
+            $fileName = "Microsoft.WindowsTerminal_$version`_8wekyb3d8bbwe.msixbundle"
+			Write-Host $filename $version
             $downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
             $outputPath = "$env:TEMP\$fileName"
             Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session
 
-            # Verify if download was successful
-            if (!(Test-Path $outputPath)) {
+            if (-not (Test-Path -Path $outputPath)) {
                 throw "Failed to download Windows Terminal."
             }
 
-            Add-AppxPackage -Path $outputPath -ErrorAction Stop
+            Add-AppxPackage -Path $outputPath -ErrorAction Stoprun
 
             Write-Host "Windows Terminal Installed."
 
-            # Overwrite settings.json file
             Write-Host "Overwriting settings.json file..."
             $settingsJsonUrl = "https://raw.githubusercontent.com/Dwarf1er/dotfiles/master/windows/windows-terminal/settings.json"
             $settingsJsonFilePath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
@@ -55,39 +51,51 @@ function Install-WindowsTerminal {
             Write-Host "An error occurred: $_"
             Write-Host "Failed to install Windows Terminal."
         } finally {
-            Remove-Item $outputPath -Force
+			if (Test-Path -Path $outputPath) {
+				Remove-Item $outputPath -Force
+			}
         }
     } else {
         Write-Host "Windows Terminal is already installed."
     }
 }
 
-# Install FiraCode Nerd Font
 function Install-FiraCodeNerdFont {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
     )
-    $outputPath = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts\FiraCodeNerdFontMono-Regular.ttf"
+    $outputPath = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
     
     try {
         Write-Host "Installing FiraCode NerdFont..."
+		if (-not (Test-Path -Path $outputPath)) {
+            Write-Host "Creating directory: $outputPath"
+            New-Item -Path $outputPath -ItemType Directory | Out-Null
+        }
         $url = "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/patched-fonts/FiraCode/Regular/FiraCodeNerdFontMono-Regular.ttf"
+		$outputPath += "\FiraCodeNerdFontMono-Regular.ttf"
         Invoke-WebRequest -Uri $url -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+		
+		$destination = (New-Object -ComObject Shell.Application).Namespace(0x14)
+		$destination.CopyHere($outputPath, 0x10)
 
         Write-Host "FiraCode NerdFont installed."
     } catch {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install FiraCode NerdFont."
-    }
+    } finally {
+		if (Test-Path -Path $outputPath) {
+			Remove-Item $outputPath -Force
+		}
+	}
 }
 
-# Install Oh My Posh
 function Install-OhMyPosh {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
     )
     $ohmyposhDirectory = "$env:LOCALAPPDATA\Programs\oh-my-posh"
-    if (Test-Path $ohmyposhDirectory) {
+    if (Test-Path -Path $ohmyposhDirectory) {
         Write-Host "Removing existing Oh My Posh installation..."
         try {
             Remove-Item $ohmyposhDirectory -Recurse -Force
@@ -109,20 +117,22 @@ function Install-OhMyPosh {
 
     try {
         Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
-        Start-Process $outputPath -ArgumentList "/SILENT" -Wait
+        Start-Process $outputPath -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /CURRENTUSER" -Wait
         Write-Host "Oh My Posh installed."
     } catch {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install Oh My Posh."
     } finally {
-        Remove-Item $outputPath -Force
+		if (Test-Path -Path $outputPath) {
+			Remove-Item $outputPath -Force
+		}
     }
 }
 
-# Install WinFetch
 function Install-WinFetch {
     Write-Host "Installing WinFetch..."
     try {
+		Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
         Install-Script -Name pwshfetch-test-1 -Scope CurrentUser -Force -ErrorAction Stop
         Write-Host "WinFetch installed."
     } catch {
@@ -131,13 +141,12 @@ function Install-WinFetch {
     }
 }
 
-# Install MinGW
 function Install-MinGW {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
     )
     $mingwDirectory = "$env:LOCALAPPDATA\Programs\mingw64"
-    if (Test-Path $mingwDirectory) {
+    if (Test-Path -Path $mingwDirectory) {
         Write-Host "Removing existing MinGW installation..."
         try {
             Remove-Item $mingwDirectory -Recurse -Force
@@ -170,14 +179,12 @@ function Install-MinGW {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install MinGW."
     } finally {
-        # Cleanup
-        if (Test-Path $outputPath) {
+        if (Test-Path -Path $outputPath) {
             Remove-Item $outputPath -Force
         }
     }
 }
 
-# Install Neovim
 function Install-Neovim {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
@@ -186,17 +193,17 @@ function Install-Neovim {
     $neovimConfigDirectory = "$env:LOCALAPPDATA\nvim"
     $neovimDataDirectory = "$env:LOCALAPPDATA\nvim-data"
     try {
-        if (Test-Path $neovimDirectory) {
+        if (Test-Path -Path $neovimDirectory) {
             Write-Host "Removing existing Neovim installation..."
             Remove-Item $neovimDirectory -Recurse -Force
             Write-Host "Existing Neovim installation removed."
         }
-        if (Test-Path $neovimConfigDirectory) {
+        if (Test-Path -Path $neovimConfigDirectory) {
             Write-Host "Removing existing Neovim configuration..."
             Remove-Item $neovimConfigDirectory -Recurse -Force
             Write-Host "Existing Neovim configuration removed."
         }
-        if (Test-Path $neovimDataDirectory) {
+        if (Test-Path -Path $neovimDataDirectory) {
             Write-Host "Removing existing Neovim data..."
             Remove-Item $neovimDataDirectory -Recurse -Force
             Write-Host "Existing Neovim data removed."
@@ -229,20 +236,18 @@ function Install-Neovim {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install Neovim."
     } finally {
-        # Cleanup
-		if(Test-Path "$env:TEMP\nvim-win64.zip") {
+		if(Test-Path -Path "$env:TEMP\nvim-win64.zip") {
 			Remove-Item "$env:TEMP\nvim-win64.zip" -Force
 		}
-        if (Test-Path $outputPath) {
+        if (Test-Path -Path $outputPath) {
             Remove-Item $outputPath -Force
         }
-        if (Test-Path "$env:TEMP\dotfiles-master") {
+        if (Test-Path -Path "$env:TEMP\dotfiles-master") {
             Remove-Item -Path "$env:TEMP\dotfiles-master" -Recurse -Force
         }
     }
 }
 
-# Install Git
 function Install-Git {
 	param (
         [Microsoft.PowerShell.Commands.WebRequestSession]$Session
@@ -259,29 +264,64 @@ function Install-Git {
         $downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
         $outputPath = "$env:TEMP\$fileName"
         Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
-        Start-Process $outputPath -ArgumentList "/SILENT /INSTDIR=$env:LOCALAPPDATA\Programs" -Wait
+		$gitOptions = @"
+[Setup]
+Lang=default
+Dir=$env:LOCALAPPDATA\Programs\Git
+Group=Git
+NoIcons=1
+SetupType=default
+Components=ext,ext\shellhere,ext\guihere,gitlfs,assoc,assoc_sh,scalar
+Tasks=
+EditorOption=VIM
+CustomEditorPath=
+DefaultBranchOption=
+PathOption=Cmd
+SSHOption=OpenSSH
+TortoiseOption=false
+CURLOption=OpenSSL
+CRLFOption=CRLFAlways
+BashTerminalOption=MinTTY
+GitPullBehaviorOption=Merge
+UseCredentialManager=Enabled
+PerformanceTweaksFSCache=Enabled
+EnableSymlinks=Enabled
+EnablePseudoConsoleSupport=Disabled
+EnableFSMonitor=Disabled
+"@
+		$gitOptions | Set-Content -Path "$env:TEMP\git_options.ini"
+        Start-Process $outputPath -ArgumentList "/SILENT /LOADINF=$env:TEMP\git_options.ini" -Wait
         Write-Host "Git installed."
 	} catch {
         Write-Host "An error occurred: $_"
         Write-Host "Failed to install Git."
     } finally {
-        # Cleanup
-        if (Test-Path $outputPath) {
+        if (Test-Path -Path $outputPath) {
             Remove-Item $outputPath -Force
+        }
+		if (Test-Path -Path "$env:TEMP\git_options.ini") {
+            Remove-Item "$env:TEMP\git_options.ini" -Force
         }
     }
 }
 
-# Create the PowerShell profile file
 function New-PowerShellProfile {
     $powershellProfilePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
-    $powershellProfileContents = '
-    & "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe" --init --shell pwsh --config "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\jandedobbeleer.omp.json" | Invoke-Expression
-    & "C:\Users\$env:USERNAME\Documents\WindowsPowershell\Scripts\pwshfetch-test-1.ps1"
-    $env:PATH += ";$env:LOCALAPPDATA\Programs\mingw64\bin"
-    $env:PATH += ";$env:LOCALAPPDATA\Programs\nvim\bin"
-    $env:PATH += ";$env:LOCALAPPDATA\Programs\Git\bin"
-    '
+    $powershellProfileContents = '`
+& "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe" --init --shell pwsh --config "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\jandedobbeleer.omp.json" | Invoke-Expression
+& "C:\Users\$env:USERNAME\Documents\WindowsPowershell\Scripts\pwshfetch-test-1.ps1"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\mingw64\bin"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\nvim\bin"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\Git\bin"
+'
+
+	if (-not (Get-AppxPackage -Name Microsoft.WindowsTerminal)) {
+		$powershellProfileContents += '
+Set-ItemProperty -Path "HKCU:\Console" -Name "FaceName" -Value "FiraCode Nerd Font Mono"
+Set-ItemProperty -Path "HKCU:\Console\%SystemRoot%_System32_WindowsPowerShell_v1.0_powershell.exe" -Name "FaceName" -Value "FiraCode Nerd Font Mono"
+'
+	}
+	
     try {
         $powershellProfileContents | Out-File -FilePath $powershellProfilePath -Force -ErrorAction Stop
         Write-Host "PowerShell profile created successfully."
