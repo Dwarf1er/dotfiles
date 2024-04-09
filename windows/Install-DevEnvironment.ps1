@@ -307,20 +307,22 @@ EnableFSMonitor=Disabled
 
 function New-PowerShellProfile {
     $powershellProfilePath = "$env:USERPROFILE\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
-    $powershellProfileContents = '`
-& "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe" --init --shell pwsh --config "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\jandedobbeleer.omp.json" | Invoke-Expression
-& "C:\Users\$env:USERNAME\Documents\WindowsPowershell\Scripts\pwshfetch-test-1.ps1"
-$env:PATH += ";$env:LOCALAPPDATA\Programs\mingw64\bin"
-$env:PATH += ";$env:LOCALAPPDATA\Programs\nvim\bin"
-$env:PATH += ";$env:LOCALAPPDATA\Programs\Git\bin"
-'
-
-	if (-not (Get-AppxPackage -Name Microsoft.WindowsTerminal)) {
+    $powershellProfileContents = ""
+    	if (-not (Get-AppxPackage -Name Microsoft.WindowsTerminal)) {
 		$powershellProfileContents += '
 Set-ItemProperty -Path "HKCU:\Console" -Name "FaceName" -Value "FiraCode Nerd Font Mono"
 Set-ItemProperty -Path "HKCU:\Console\%SystemRoot%_System32_WindowsPowerShell_v1.0_powershell.exe" -Name "FaceName" -Value "FiraCode Nerd Font Mono"
 '
 	}
+ 
+    $powershellProfileContents += '`
+& "$env:LOCALAPPDATA\Programs\oh-my-posh\bin\oh-my-posh.exe" --init --shell pwsh --config "$env:LOCALAPPDATA\Programs\oh-my-posh\themes\jandedobbeleer.omp.json" | Invoke-Expression
+& "C:\Users\$env:USERNAME\Documents\WindowsPowershell\Scripts\pwshfetch-test-1.ps1"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\mingw64\bin"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\nvim\bin"
+$env:PATH += ";$env:LOCALAPPDATA\Programs\Git\bin"
+Set-Location -Path "$env:USERPROFILE"
+'
 	
     try {
         $powershellProfileContents | Out-File -FilePath $powershellProfilePath -Force -ErrorAction Stop
