@@ -104,19 +104,19 @@ function Install-OhMyPosh {
             Write-Host "An error occurred while removing existing Oh My Posh installation: $_"
         }
     }
-    Write-Host "Installing Oh My Posh..."
-    $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest"
-    $request = [System.Net.WebRequest]::Create($url)
-    $response = $request.GetResponse()
-    $tagUrl = $response.ResponseUri.OriginalString
-	$response.Dispose()
-    $version = $tagUrl.Split("/")[-1].Trim("v")
-    $fileName = "install-amd64.exe"
-    $downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
-    $outputPath = "$env:TEMP\$fileName"
 
     try {
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session -ErrorAction Stop
+		Write-Host "Installing Oh My Posh..."
+		$url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest"
+		$request = [System.Net.WebRequest]::Create($url)
+		$response = $request.GetResponse()
+		$tagUrl = $response.ResponseUri.OriginalString
+		$response.Dispose()
+		$version = $tagUrl.Split("/")[-1].Trim("v")
+		$fileName = "install-amd64.exe"
+		$downloadUrl = $tagUrl.Replace("tag", "download") + "/" + $fileName
+		$outputPath = "$env:TEMP\$fileName"
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -WebSession $Session
         Start-Process $outputPath -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /CURRENTUSER" -Wait
         Write-Host "Oh My Posh installed."
     } catch {
