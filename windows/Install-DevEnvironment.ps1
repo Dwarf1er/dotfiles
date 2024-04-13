@@ -37,7 +37,7 @@ function Install-WindowsTerminal {
                 throw "Failed to download Windows Terminal."
             }
 
-            Add-AppxPackage -Path $outputPath -ErrorAction Stoprun
+            Add-AppxPackage -Path $outputPath -ErrorAction Stop
 
             Write-Host "Windows Terminal Installed."
 
@@ -132,6 +132,7 @@ function Install-OhMyPosh {
 function Install-WinFetch {
     Write-Host "Installing WinFetch..."
     try {
+		Install-PackageProvider -Name NuGet -Force
 		Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
         Install-Script -Name pwshfetch-test-1 -Scope CurrentUser -Force -ErrorAction Stop
         Write-Host "WinFetch installed."
@@ -205,7 +206,7 @@ function Install-Neovim {
         }
         if (Test-Path -Path $neovimDataDirectory) {
             Write-Host "Removing existing Neovim data..."
-	    # Remove-Item is still broken when there are symbolic links, see: https://github.com/powershell/powershell/issues/621
+			# Remove-Item is still broken when there are symbolic links, see: https://github.com/powershell/powershell/issues/621
             cmd /c rmdir /s /q $neovimDataDirectory
             Write-Host "Existing Neovim data removed."
         }
@@ -291,7 +292,7 @@ EnablePseudoConsoleSupport=Disabled
 EnableFSMonitor=Disabled
 "@
 		$gitOptions | Set-Content -Path "$env:TEMP\git_options.ini"
-        Start-Process $outputPath -ArgumentList "/SILENT /LOADINF=$env:TEMP\git_options.ini" -Wait
+        Start-Process $outputPath -ArgumentList "/VERYSILENT /LOADINF=$env:TEMP\git_options.ini" -Wait
         Write-Host "Git installed."
 	} catch {
         Write-Host "An error occurred: $_"
