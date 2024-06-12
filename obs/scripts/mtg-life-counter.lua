@@ -6,6 +6,7 @@ local source_name_commander_damage_1 = "CommanderDamage1"
 local source_name_commander_damage_2 = "CommanderDamage2"
 local source_name_commander_damage_3 = "CommanderDamage3"
 local starting_life_total = 40
+local skull_emoji = "☠"
 
 -- counters
 local life_total = 40
@@ -61,11 +62,20 @@ local function update_text_source(source_name, text)
     end
 end
 
+-- check if the player is dead
+local function check_dead()
+    if life_total <= 0 or commander_damage_1 >= 21 or commander_damage_2 >= 21 or commander_damage_3 >= 21 then
+        update_text_source(source_name_life_total, skull_emoji)
+    else
+        update_text_source(source_name_life_total, tostring(life_total))
+    end
+end
+
 -- increase life hotkey callback
 local function increase_life(pressed)
     if pressed then
         life_total = life_total + 1
-        update_text_source(source_name_life_total, tostring(life_total))
+        check_dead()
     end
 end
 
@@ -73,7 +83,7 @@ end
 local function decrease_life(pressed)
     if pressed then
         life_total = life_total - 1
-        update_text_source(source_name_life_total, tostring(life_total))
+        check_dead()
     end
 end
 
@@ -83,7 +93,7 @@ local function increase_commander_damage_1(pressed)
         commander_damage_1 = commander_damage_1 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_1, tostring(commander_damage_1))
-        update_text_source(source_name_life_total, tostring(life_total))
+        check_dead()
     end
 end
 
@@ -93,7 +103,7 @@ local function increase_commander_damage_2(pressed)
         commander_damage_2 = commander_damage_2 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_2, tostring(commander_damage_2))
-        update_text_source(source_name_life_total, tostring(life_total))
+        check_dead()
     end
 end
 
@@ -103,7 +113,7 @@ local function increase_commander_damage_3(pressed)
         commander_damage_3 = commander_damage_3 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_3, tostring(commander_damage_3))
-        update_text_source(source_name_life_total, tostring(life_total))
+        check_dead()
     end
 end
 
