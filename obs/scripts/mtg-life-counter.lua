@@ -81,7 +81,7 @@ end
 
 -- decrease life hotkey callback
 local function decrease_life(pressed)
-    if pressed then
+    if pressed and life_total > 0 then
         life_total = life_total - 1
         check_dead()
     end
@@ -89,7 +89,7 @@ end
 
 -- increase commander damage 1 hotkey callback
 local function increase_commander_damage_1(pressed)
-    if pressed then
+    if pressed and commander_damage_1 < 21 then
         commander_damage_1 = commander_damage_1 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_1, tostring(commander_damage_1))
@@ -99,7 +99,7 @@ end
 
 -- increase commander damage 2 hotkey callback
 local function increase_commander_damage_2(pressed)
-    if pressed then
+    if pressed and commander_damage_2 < 21 then
         commander_damage_2 = commander_damage_2 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_2, tostring(commander_damage_2))
@@ -109,7 +109,7 @@ end
 
 -- increase commander damage 3 hotkey callback
 local function increase_commander_damage_3(pressed)
-    if pressed then
+    if pressed and commander_damage_3 < 21 then
         commander_damage_3 = commander_damage_3 + 1
         life_total = life_total - 1
         update_text_source(source_name_commander_damage_3, tostring(commander_damage_3))
