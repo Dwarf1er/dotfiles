@@ -67,7 +67,7 @@ config config --local status.showUntrackedFiles no
 
 To manage your git credentials with libsecret run the following commands:
 ```bash
-sudo pacman -S libsecret
+sudo pacman -S libsecret gnome-keyring
 cd /usr/share/git/credential/libsecret
 sudo make
 cd ~
