@@ -62,3 +62,14 @@ config checkout
 # Hide all the files that you aren't explicitly tracking from showing as untracked
 config config --local status.showUntrackedFiles no
 ```
+
+## Manage Git Credentials with libsecret
+
+To manage your git credentials with libsecret run the following commands:
+```bash
+sudo pacman -S libsecret
+cd /usr/share/git/credential/libsecret
+sudo make
+cd ~
+git config --global credential.helper /usr/share/git/credential/libsecret/git-credential-libsecret
+```
