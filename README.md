@@ -1,6 +1,6 @@
 # Dotfiles
 
-Storing your dotfiles in a git bare repo. This is how you can track your dotfiles using a git bare repo inside $HOME/.config.
+Storing your dotfiles in a git bare repo. This is how you can track your dotfiles using a git bare repo inside `$HOME/.config`.
 
 # Table of Contents
 
@@ -8,6 +8,7 @@ Storing your dotfiles in a git bare repo. This is how you can track your dotfile
     - [Initial Setup](#initial-setup)
     - [Tracking Files](#tracking-files)
     - [Configuring a New System](#configuring-a-new-system)
+    - [Manage Git Credentials with libsecret](#manage-git-credentials-with-libsecret)
 
 ## Initial Setup
 
