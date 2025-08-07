@@ -1,13 +1,18 @@
--- Linux/MacOS:
-vim.cmd("set runtimepath+=~/.config/nvim")
--- Windows:
--- vim.cmd("set runtimepath+=%USERPROFILE%\\AppData\\Local\\nvim")
+-- Core
+require("config.globals")
+require("config.filetypes")
+require("config.options")
+require("config.keymap")
+require("config.autocmd")
 
-require("user.core.mappings")
-require("user.core.autocmds")
-require("user.core.settings")
-require("user.lazyconfig")
-require("user.lspconfig")
-require("user.plugins.config.telescope-nvim-config")
-require("user.plugins.config.nvim-treesitter-config")
-require("user.plugins.config.nvim-cmp-config")
+-- Plugins
+require("plugins.mason-nvim")
+require("plugins.rzls-nvim")
+require("plugins.roslyn-nvim")
+require("plugins.lualine-nvim")
+require("plugins.nvim-treesitter")
+require("plugins.onedark-nvim")
+require("plugins.telescope-nvim")
+
+-- LSP configuration
+require("config.lsp")
