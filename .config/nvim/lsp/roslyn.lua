@@ -12,10 +12,10 @@ local cmd = {
     vim.fs.joinpath(rzls_path, "RazorExtension", "Microsoft.VisualStudioCode.RazorExtension.dll"),
 }
 
-return {
+vim.lsp.config("roslyn", {
     cmd = cmd,
     handlers = require("rzls.roslyn_handlers"),
-    filetypes = { "cs", "razor" },
+    filetypes = { "cs" },
     root_markers = { { ".sln", ".csproj", "project.json" }, ".git" },
     settings = {
         ["csharp|inlay_hints"] = {
@@ -47,4 +47,4 @@ return {
             },
         },
     }
-}
+})
