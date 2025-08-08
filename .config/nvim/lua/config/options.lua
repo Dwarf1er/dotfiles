@@ -3,23 +3,23 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = "yes"
 
 -- Cursorline
 vim.o.cursorline = true
 
 -- OS clipboard
 vim.g.clipboard = {
-    name = 'WslClipboard',
-    copy = {
-        ["+"] = 'clip.exe',
-        ["*"] = 'clip.exe',
-    },
-    paste = {
-         ["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
-         ["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
-    },
-    cache_enabled = 0,
+	name = "WslClipboard",
+	copy = {
+		["+"] = "clip.exe",
+		["*"] = "clip.exe",
+	},
+	paste = {
+		["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+		["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+	},
+	cache_enabled = 0,
 }
 
 -- Search
@@ -27,7 +27,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Preview substitutions
-vim.o.inccommand = 'split'
+vim.o.inccommand = "split"
 
 -- Update time
 vim.o.updatetime = 250
@@ -52,4 +52,4 @@ vim.o.splitbelow = true
 vim.o.undofile = true
 
 -- Set the default border for all floating windows
-vim.o.winborder = 'rounded'
+vim.o.winborder = "rounded"

@@ -1,27 +1,27 @@
 vim.pack.add({
-    { src = "https://github.com/mfussenegger/nvim-dap" },
-    { src = "https://github.com/nvim-neotest/nvim-nio" },
-    { src = "https://github.com/rcarriga/nvim-dap-ui" },
-    { src = "https://github.com/NicholasMata/nvim-dap-cs" }
+	{ src = "https://github.com/mfussenegger/nvim-dap" },
+	{ src = "https://github.com/nvim-neotest/nvim-nio" },
+	{ src = "https://github.com/rcarriga/nvim-dap-ui" },
+	{ src = "https://github.com/NicholasMata/nvim-dap-cs" },
 })
 
 local dap = require("dap")
 local dapui = require("dapui")
 
-require ("dapui").setup()
-require ("dap-cs").setup()
+require("dapui").setup()
+require("dap-cs").setup()
 
 dap.listeners.before.attach.dapui_config = function()
-    dapui.open()
+	dapui.open()
 end
 dap.listeners.before.launch.dapui_config = function()
-    dapui.open()
+	dapui.open()
 end
 dap.listeners.before.event_terminated.dapui_config = function()
-    dapui.close()
+	dapui.close()
 end
 dap.listeners.before.event_exited.dapui_config = function()
-    dapui.close()
+	dapui.close()
 end
 
 vim.keymap.set("n", "<F9>", dap.toggle_breakpoint, {})

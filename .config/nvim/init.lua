@@ -14,6 +14,7 @@ require("plugins.nvim-treesitter")
 require("plugins.onedark-nvim")
 require("plugins.telescope-nvim")
 require("plugins.nvim-dap")
+require("plugins.conform-nvim")
 
 -- LSP configuration
 require("config.lsp")
