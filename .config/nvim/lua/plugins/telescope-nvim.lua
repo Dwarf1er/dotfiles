@@ -10,7 +10,7 @@ vim.pack.add({ "https://github.com/nvim-telescope/telescope.nvim.git" })
 require("telescope").setup({
 	defaults = {
 		-- Ignoring virtual csharp files for rzls.nvim
-		file_ignore_patterns = { "%__virtual.cs$" },
+		file_ignore_patterns = { "__virtual%.cs$" },
 	},
 })
 

@@ -7,6 +7,7 @@ require("nvim-treesitter.configs").setup({
 		"c_sharp",
 		"razor",
 		"html",
+        "go",
 	},
 	auto_install = false,
 	highlight = {

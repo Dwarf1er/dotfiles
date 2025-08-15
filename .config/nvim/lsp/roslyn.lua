@@ -1,4 +1,3 @@
-require("mason-registry")
 local rzls_path = vim.fn.expand("$MASON/packages/rzls/libexec")
 
 local cmd = {

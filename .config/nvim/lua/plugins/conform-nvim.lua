@@ -7,6 +7,7 @@ conform.setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		cs = { "csharpier" },
+		go = { "goimports", "gofumpt" },
 	},
 	formatters = {
 		csharpier = {

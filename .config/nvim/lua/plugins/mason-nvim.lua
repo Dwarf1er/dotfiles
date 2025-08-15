@@ -22,5 +22,8 @@ require("mason-tool-installer").setup({
 		"netcoredbg",
 		"stylua",
 		"csharpier",
+		"gopls",
+		"goimports",
+		"gofumpt",
 	},
 })
