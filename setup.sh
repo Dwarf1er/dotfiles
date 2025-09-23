@@ -1,5 +1,4 @@
 #!/bin/bash
-
 install_packages() {
     for package in "$@"; do
         if ! command -v "$package" &> /dev/null; then
@@ -20,24 +19,23 @@ GIT_REPO_URL="$1"
 
 echo "Removing existing .config directory and .bashrc..."
 rm -rf $HOME/.config
-rm $HOME/.bashrc
+rm -f $HOME/.bashrc
 
 echo "Installing packages..."
 install_packages git
 
-echo "Adding config alias..."
-alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
-
 echo "Cloning dotfiles repository..."
-git clone --bare $GIT_REPO_URL $HOME
+git clone --bare $GIT_REPO_URL $HOME/.config
 
-echo "Sourcing .bashrc..."
-source $HOME/.bashrc
+echo "Setting up temporary config function for setup..."
+config() {
+    /usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME "$@"
+}
 
-echo "Checking out remote..."
+echo "Checking out files..."
 config checkout
 
 echo "Hiding untracked files..."
-config --local status.showUntrackedFiles no
+config config --local status.showUntrackedFiles no
 
 echo "Setup complete!"
