@@ -18,8 +18,9 @@ fi
 
 GIT_REPO_URL="$1"
 
-echo "Removing existing .config directory..."
+echo "Removing existing .config directory and .bashrc..."
 rm -rf $HOME/.config
+rm $HOME/.bashrc
 
 echo "Installing packages..."
 install_packages git
