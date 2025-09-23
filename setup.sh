@@ -56,6 +56,8 @@ setup_dotfiles() {
     
     rm -rf $HOME/.config
     rm -f $HOME/.bashrc
+    rm -f $HOME/README.md
+    rm -f $HOME/setup.sh
     
     git clone --bare "$git_repo_url" $HOME/.config
     
