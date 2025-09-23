@@ -14,7 +14,7 @@ echo "Adding config alias..."
 alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
 
 echo "Cloning dotfiles repository..."
-git clone --bare $GIT_REPO_URL $HOME/.config
+git clone --bare $GIT_REPO_URL $HOME
 
 echo "Sourcing .bashrc..."
 source $HOME/.bashrc
