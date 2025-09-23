@@ -8,7 +8,4 @@
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
-alias vencord='sh -c "$(curl -sS https://raw.githubusercontent.com/Vendicated/VencordInstaller/main/install.sh)"'
 PS1='[\u@\h \W]\$ '
-
-fastfetch
