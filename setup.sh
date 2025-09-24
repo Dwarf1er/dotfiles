@@ -46,53 +46,35 @@ REQUIRED_AUR=(
     hyprpaper
 )
 
-declare -A DEVELOPMENT_OFFICIAL=(
-    ["go"]="Golang"
-    ["godot"]="Godot Engine"
-)
-
-declare -A DEVELOPMENT_AUR=(
-    ["neovim-nightly-bin"]="Neovim Nightly"
-)
-
-declare -A GAMING_OFFICIAL=(
-    ["steam"]="Steam"
-)
-
-declare -A GAMING_AUR=()
-
-declare -A MEDIA_OFFICIAL=(
-    ["gimp"]="GIMP"
-    ["inkscape"]="Inkscape"
-    ["obs-studio"]="OBS"
-    ["audacity"]="Audacity"
-    ["blender"]="Blender"
-    ["kdenlive"]="KDEnlive"
-)
-
-declare -A MEDIA_AUR=()
-
-declare -A THREED_PRINTING_OFFICIAL=(
-    ["freecad"]="FreeCAD"
-)
-
-declare -A THREED_PRINTING_AUR=(
-    ["orca-slicer-bin"]="Orca Slicer"
-)
-
-declare -A OFFICE_OFFICIAL=(
-    ["libreoffice-fresh"]="LibreOffice"
-)
-
-declare -A OFFICE_AUR=()
-
-declare -A COMMUNICATION_OFFICIAL=(
-    ["signal-desktop"]="Signal Messenger"
-    ["discord"]="Discord"
-)
-
-declare -A COMMUNICATION_AUR=(
-    ["vencord-bin"]="Vencord discord client mod"
+# Define optional packages with their descriptions and repo type
+declare -A OPTIONAL_PACKAGES=(
+    # Development
+    ["go"]="Golang programming language [Official]"
+    ["godot"]="Godot game engine [Official]"
+    ["neovim-nightly-bin"]="Neovim nightly build [AUR]"
+    
+    # Gaming
+    ["steam"]="Steam gaming platform [Official]"
+    
+    # Media & Graphics
+    ["gimp"]="GNU Image Manipulation Program [Official]"
+    ["inkscape"]="Vector graphics editor [Official]"
+    ["obs-studio"]="Open Broadcaster Software [Official]"
+    ["audacity"]="Audio editor [Official]"
+    ["blender"]="3D creation suite [Official]"
+    ["kdenlive"]="Video editor [Official]"
+    
+    # 3D Printing
+    ["freecad"]="Parametric 3D CAD modeler [Official]"
+    ["orca-slicer-bin"]="3D printer slicer [AUR]"
+    
+    # Office & Productivity
+    ["libreoffice-fresh"]="Office suite [Official]"
+    
+    # Communication
+    ["signal-desktop"]="Signal messenger [Official]"
+    ["discord"]="Discord chat application [Official]"
+    ["vencord-bin"]="Discord client modification [AUR]"
 )
 
 install_packages() {
@@ -167,142 +149,85 @@ install_required_packages() {
     install_packages "aur" "${REQUIRED_AUR[@]}"
 }
 
-show_category_selection() {
-    local categories=$(whiptail --title "Package Categories" \
-        --checklist "Select package categories to install:" 18 70 6 \
-        "development" "Development tools" OFF \
-        "gaming" "Gaming packages" OFF \
-        "media" "Media & Graphics tools" OFF \
-        "3d-printing" "3D Printing tools" OFF \
-        "office" "Office & Productivity" OFF \
-        "communication" "Communication apps" OFF \
-        3>&1 1>&2 2>&3)
-    
-    if [ $? -ne 0 ]; then
-        log_info "Category selection cancelled."
-        return 1
-    fi
-    
-    echo $categories | tr -d '"'
+is_aur_package() {
+    local pkg="$1"
+    [[ "${OPTIONAL_PACKAGES[$pkg]}" == *"[AUR]"* ]]
 }
 
-select_from_category() {
-    local category="$1"
-    local official_var="$2"
-    local aur_var="$3"
-    
-    local options=()
-    
-    local -n official_packages=$official_var
-    for pkg in "${!official_packages[@]}"; do
-        options+=("$pkg" "${official_packages[$pkg]} [Official]" OFF)
-    done
-    
-    local -n aur_packages=$aur_var
-    for pkg in "${!aur_packages[@]}"; do
-        options+=("$pkg" "${aur_packages[$pkg]} [AUR]" OFF)
-    done
-    
-    if [ ${#options[@]} -eq 0 ]; then
-        log_warn "No packages available for category: $category"
-        return 1
-    fi
-    
-    local selections=$(whiptail --title "Select $category Packages" \
-        --checklist "Choose specific packages or cancel to install all:" \
-        20 80 12 \
-        "${options[@]}" \
-        3>&1 1>&2 2>&3)
-    
-    echo $selections | tr -d '"'
-}
-
-install_category_packages() {
-    local category="$1"
-    local official_var="$2"
-    local aur_var="$3"
-    
-    if whiptail --title "Install $category Packages" \
-        --yesno "Install ALL $category packages or SELECT specific ones?\n\nYes = Install All\nNo = Select Specific" 10 60; then
-        log_info "Installing all $category packages..."
+select_optional_packages() {
+    if whiptail --title "Optional Packages" \
+        --yesno "Install ALL optional packages or SELECT specific ones?\n\nYes = Install All\nNo = Select Specific" 10 60; then
         
-        local -n official_packages=$official_var
-        local -n aur_packages=$aur_var
+        log_info "Installing all optional packages..."
+        
+        local official_packages=()
+        local aur_packages=()
+        
+        for pkg in "${!OPTIONAL_PACKAGES[@]}"; do
+            if is_aur_package "$pkg"; then
+                aur_packages+=("$pkg")
+            else
+                official_packages+=("$pkg")
+            fi
+        done
         
         if [ ${#official_packages[@]} -gt 0 ]; then
-            install_packages "official" "${!official_packages[@]}"
+            install_packages "official" "${official_packages[@]}"
         fi
         
         if [ ${#aur_packages[@]} -gt 0 ]; then
-            install_packages "aur" "${!aur_packages[@]}"
+            install_packages "aur" "${aur_packages[@]}"
         fi
-    else
-        local selected=$(select_from_category "$category" "$official_var" "$aur_var")
-        
-        if [ -n "$selected" ]; then
-            log_info "Installing selected $category packages..."
             
-            local selected_official=()
-            local selected_aur=()
-            
-            IFS=' ' read -ra selected_packages <<< "$selected"
-            
-            local -n official_packages=$official_var
-            local -n aur_packages=$aur_var
-            
-            for pkg in "${selected_packages[@]}"; do
-                if [[ -n "${official_packages[$pkg]:-}" ]]; then
-                    selected_official+=("$pkg")
-                elif [[ -n "${aur_packages[$pkg]:-}" ]]; then
-                    selected_aur+=("$pkg")
-                fi
-            done
-            
-            if [ ${#selected_official[@]} -gt 0 ]; then
-                install_packages "official" "${selected_official[@]}"
-            fi
-            
-            if [ ${#selected_aur[@]} -gt 0 ]; then
-                install_packages "aur" "${selected_aur[@]}"
-            fi
-        else
-            log_info "No packages selected for $category."
-        fi
-    fi
-}
-
-install_optional_packages() {
-    local selected_categories=$(show_category_selection)
-    
-    if [ -z "$selected_categories" ]; then
-        log_info "No categories selected."
         return 0
     fi
     
-    IFS=' ' read -ra categories <<< "$selected_categories"
-    
-    for category in "${categories[@]}"; do
-        case $category in
-            "development")
-                install_category_packages "Development" "DEVELOPMENT_OFFICIAL" "DEVELOPMENT_AUR"
-                ;;
-            "gaming")
-                install_category_packages "Gaming" "GAMING_OFFICIAL" "GAMING_AUR"
-                ;;
-            "media")
-                install_category_packages "Media" "MEDIA_OFFICIAL" "MEDIA_AUR"
-                ;;
-            "3d-printing")
-                install_category_packages "3D Printing" "THREED_PRINTING_OFFICIAL" "THREED_PRINTING_AUR"
-                ;;
-            "office")
-                install_category_packages "Office" "OFFICE_OFFICIAL" "OFFICE_AUR"
-                ;;
-            "communication")
-                install_category_packages "Communication" "COMMUNICATION_OFFICIAL" "COMMUNICATION_AUR"
-                ;;
-        esac
+    local whiptail_options=()
+    for pkg in "${!OPTIONAL_PACKAGES[@]}"; do
+        whiptail_options+=("$pkg" "${OPTIONAL_PACKAGES[$pkg]}" OFF)
     done
+    
+    local selections=$(whiptail --title "Optional Packages" \
+        --checklist "Select packages to install (SPACE=toggle, TAB=navigate, ENTER=confirm):" \
+        25 90 15 \
+        "${whiptail_options[@]}" \
+        3>&1 1>&2 2>&3)
+    
+    if [ $? -ne 0 ]; then
+        log_info "Package selection cancelled."
+        return 1
+    fi
+    
+    if [ -z "$selections" ]; then
+        log_info "No packages selected."
+        return 0
+    fi
+    
+    selections=$(echo "$selections" | tr -d '"')
+    IFS=' ' read -ra selected_packages <<< "$selections"
+    
+    local official_packages=()
+    local aur_packages=()
+    
+    for pkg in "${selected_packages[@]}"; do
+        if is_aur_package "$pkg"; then
+            aur_packages+=("$pkg")
+        else
+            official_packages+=("$pkg")
+        fi
+    done
+    
+    if [ ${#official_packages[@]} -gt 0 ]; then
+        log_info "Installing selected official packages: ${official_packages[*]}"
+        install_packages "official" "${official_packages[@]}"
+    fi
+    
+    if [ ${#aur_packages[@]} -gt 0 ]; then
+        log_info "Installing selected AUR packages: ${aur_packages[*]}"
+        install_packages "aur" "${aur_packages[@]}"
+    fi
+    
+    log_info "Selected package installation complete!"
 }
 
 main() {
@@ -325,7 +250,7 @@ main() {
     install_whiptail
     
     install_required_packages
-    install_optional_packages
+    select_optional_packages
     
     setup_dotfiles "$git_repo_url"
     
