@@ -330,7 +330,8 @@ main() {
     setup_dotfiles "$git_repo_url"
     
     log_info "Enabling services..."
-    sudo systemctl enable --now pipewire pipewire-pulse wireplumber
+    sudo systemctl --user enable pipewire
+    sudo systemctl enable --now pipewire-pulse wireplumber
     
     log_info "Refreshing font cache..."
     fc-cache -fv
