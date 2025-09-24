@@ -135,6 +135,8 @@ setup_dotfiles() {
     config checkout
     
     config config --local status.showUntrackedFiles no
+
+    sudo cp "$HOME/.config/system-config/boot/loader/loader.conf" /boot/loader/loader.conf
     
     log_info "Dotfiles setup complete!"
 }
