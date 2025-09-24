@@ -72,11 +72,11 @@ declare -A MEDIA_OFFICIAL=(
 
 declare -A MEDIA_AUR=()
 
-declare -A 3D_PRINTING_OFFICIAL=(
+declare -A THREED_PRINTING_OFFICIAL=(
     ["freecad"]="FreeCAD"
 )
 
-declare -A 3D_PRINTING_AUR=(
+declare -A THREED_PRINTING_AUR=(
     ["orca-slicer-bin"]="Orca Slicer"
 )
 
@@ -293,7 +293,7 @@ install_optional_packages() {
                 install_category_packages "Media" "MEDIA_OFFICIAL" "MEDIA_AUR"
                 ;;
             "3d-printing")
-                install_category_packages "3D Printing" "3D_PRINTING_OFFICIAL" "3D_PRINTING_AUR"
+                install_category_packages "3D Printing" "THREED_PRINTING_OFFICIAL" "THREED_PRINTING_AUR"
                 ;;
             "office")
                 install_category_packages "Office" "OFFICE_OFFICIAL" "OFFICE_AUR"
