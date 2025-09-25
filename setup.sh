@@ -28,6 +28,8 @@ REQUIRED_OFFICIAL=(
     pipewire-pulse
     pipewire-alsa
     networkmanager
+    nm-connection-editor
+    network-manager-applet
     kitty
     dolphin
     wofi
