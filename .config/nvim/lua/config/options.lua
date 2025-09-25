@@ -9,18 +9,24 @@ vim.o.signcolumn = "yes"
 vim.o.cursorline = true
 
 -- OS clipboard
-vim.g.clipboard = {
-	name = "WslClipboard",
-	copy = {
-		["+"] = "clip.exe",
-		["*"] = "clip.exe",
-	},
-	paste = {
-		["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
-		["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
-	},
-	cache_enabled = 0,
-}
+if vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1 then
+	vim.g.clipboard = {
+		name = "WslClipboard",
+		copy = {
+			["+"] = "clip.exe",
+			["*"] = "clip.exe",
+		},
+		paste = {
+			["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+			["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).ToString().Replace("`r", ""))',
+		},
+		cache_enabled = 0,
+	}
+else
+	vim.schedule(function()
+	  vim.o.clipboard = 'unnamedplus'
+	end)
+end
 
 -- Search
 vim.o.ignorecase = true
