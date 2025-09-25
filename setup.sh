@@ -20,6 +20,7 @@ log_error() {
 REQUIRED_OFFICIAL=(
     hyprland
     xdg-desktop-portal-hyprland
+    ly
     qt5-wayland
     qt6-wayland
     wireplumber
@@ -34,6 +35,7 @@ REQUIRED_OFFICIAL=(
     git
     ttf-font-awesome
     ttf-d2coding-nerd
+    wl-clipboard
 )
 
 REQUIRED_AUR=(
