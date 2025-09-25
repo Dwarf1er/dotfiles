@@ -27,3 +27,11 @@ require("mason-tool-installer").setup({
 		"gofumpt",
 	},
 })
+
+require("lspconfig").clangd.setup({
+	-- No cmd specified - uses "clangd" from PATH
+	-- When ESP-IDF is sourced: PATH clangd = ESP-clang
+	-- When ESP-IDF not sourced: PATH clangd = system clangd (if installed)
+})
+
+require("lspconfig").gdscript.setup({})
