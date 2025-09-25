@@ -48,6 +48,7 @@ REQUIRED_AUR=(
     mako
     hypridle
     hyprpaper
+    pwvucontrol
 )
 
 # Define optional packages with their descriptions and repo type
