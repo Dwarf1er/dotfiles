@@ -175,9 +175,9 @@ config diff
 ## Customizing Packages
 The setup script manages packages in three categories within the script itself:
 
-`REQUIRED_OFFICIAL`: Essential packages from Arch repositories
-`REQUIRED_AUR`: Essential packages from AUR
-`OPTIONAL_PACKAGES`: Optional packages with descriptions, presented during setup
+- `REQUIRED_OFFICIAL`: Essential packages from Arch repositories
+- `REQUIRED_AUR`: Essential packages from AUR
+- `OPTIONAL_PACKAGES`: Optional packages with descriptions, presented during setup
 
 ### Modifying Package Lists
 To customize what gets installed, edit the arrays in `setup.sh`:
