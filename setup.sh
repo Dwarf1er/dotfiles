@@ -27,6 +27,7 @@ REQUIRED_OFFICIAL=(
     pipewire
     pipewire-pulse
     pipewire-alsa
+    networkmanager
     kitty
     dolphin
     wofi
