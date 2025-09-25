@@ -8,6 +8,11 @@ require("nvim-treesitter.configs").setup({
 		"razor",
 		"html",
         "go",
+		"gdscript",
+		"godot_resource",
+		"gdshader",
+		"c",
+		"cpp"
 	},
 	auto_install = false,
 	highlight = {
