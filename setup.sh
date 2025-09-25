@@ -36,6 +36,8 @@ REQUIRED_OFFICIAL=(
     ttf-font-awesome
     ttf-d2coding-nerd
     wl-clipboard
+    mpv
+    gwenview
 )
 
 REQUIRED_AUR=(
