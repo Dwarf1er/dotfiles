@@ -1,77 +1,200 @@
 # Dotfiles
 
-Storing your dotfiles in a git bare repo. This is how you can track your dotfiles using a git bare repo inside `$HOME/.config`.
+A comprehensive dotfiles management system using a git bare repository for tracking configuration files and an automated setup script for new system installations.
 
-# Table of Contents
+## Table of Contents
 
-- [Dotfiles](#dotfiles)
-    - [Initial Setup](#initial-setup)
-    - [Tracking Files](#tracking-files)
-    - [Configuring a New System](#configuring-a-new-system)
-    - [Manage Git Credentials with libsecret](#manage-git-credentials-with-libsecret)
+- [Overview](#overview)
+- [Quick Start](#quick-start)
+- [Manual Setup](#manual-setup)
+  - [Initial Repository Setup](#initial-repository-setup)
+  - [SSH Key Setup](#ssh-key-setup)
+  - [Tracking Files](#tracking-files)
+- [New System Setup](#new-system-setup)
+  - [Automated Setup](#automated-setup)
+  - [Manual Configuration](#manual-configuration)
+- [Daily Usage](#daily-usage)
+- [Customizing Packages](#customizing-packages)
+    - [Modifying Pacakge Lists](#modifying-package-lists) 
 
-## Initial Setup
+## Overview
 
-To start tracking your dotfiles with a bare git repo, use the following commands:
+This dotfiles repository uses a bare git repository stored in `~/.config` to track configuration files throughout your home directory. This approach allows you to version control your dotfiles without moving them from their expected locations or creating symlinks.
+
+The setup includes:
+- **Hyprland** window manager configuration
+- **Waybar**, **Mako**, **Wofi** for the desktop environment
+- **Ly** display manager
+- **Kitty** terminal
+- Automated installation script with package management
+
+## Quick Start
+
+### New System Setup (Recommended)
+
+The fastest way to set up a new system is using the automated setup script:
+
 ```bash
-# Create empty git repo in ~/.config
+bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/setup.sh) "https://github.com/Dwarf1er/dotfiles.git"
+```
+
+> [!WARNING]
+> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is not made automatically because I prefer to always start fresh on new systems.
+
+This will:
+1. Update your system
+2. Install required packages (official and AUR)
+3. Present optional packages for selection
+4. Clone and configure dotfiles
+5. Set up the `config` alias for dotfiles management
+
+## Manual Setup
+
+### Initial Repository Setup
+
+If you're setting up the dotfiles repository for the first time:
+
+```bash
+# Create bare git repository
 git init --bare $HOME/.config
 
-# Create an alias for the git command to avoid conflicts with other git repos
+# Create the config alias
 alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
 
-# Hide all the files that you aren't explicitly tracking from showing as untracked
+# Hide untracked files
 config config --local status.showUntrackedFiles no
 
-# Save alias to your .bashrc
+# Make the alias permanent
 echo "alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'" >> $HOME/.bashrc
 
-# Set remote origin url
-# Replace <git-repo-url> with the URL of your remote repository, for example: https://github.com/Dwarf1er/dotfiles.git
-config remote add origin <git-repo-url>
+# Add remote repository
+config remote add origin https://github.com/Dwarf1er/dotfiles
 ```
 
-## Tracking Files
+### SSH Key Setup
 
-Once you have setup the bare repository, you can start tracking files using the alias:
+Instructions to set up SSH authentication:
+
 ```bash
+# Generate SSH key (if you don't have one)
+ssh-keygen -t ed25519 -C "your.email@example.com"
+
+# Start SSH agent and add key
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# Copy public key to clipboard (requires wl-clipboard)
+wl-copy < ~/.ssh/id_ed25519.pub
+```
+
+Then add the public key to your account in the SSH keys section.
+
+### Tracking Files
+
+Example on how to start tracking your configuration files:
+
+```bash
+# Check status
 config status
-config add ./.config/nvim/init.lua
-config commit -m "Add nvim/init.lua"
+
+# Add configuration files
+config add .config/hypr/hyprland.conf
+config add .config/waybar/config
 config add .bashrc
-config commit -m "Add bashrc"
-config push
+config add .config/kitty/kitty.conf
+
+# Commit changes
+config commit -m "feat: initial dotfiles commit"
+
+# Push to remote
+config push -u origin main
 ```
 
-## Configuring a New System
+## New System Setup
 
-To get your dotfiles from your remote repository onto a new system use the following commands:
+### Automated Setup
+
+Use the setup script for new installations:
+
 ```bash
-# Create an alias for the git command to avoid conflicts with other git repos
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/setup.sh) "https://github.com/Dwarf1er/dotfiles.git"
+```
 
-# Add .config to your .gitignore before cloning the remote repository to avoid recursion problems
-echo ".config" >> .gitignore
+### Manual Configuration
 
-# Clone your remote repository
-# Replace <git-repo-url> with the URL of your remote repository, for example: https://github.com/Dwarf1er/dotfiles.git
-git clone --bare <git-repo-url> $HOME/.config
+If you prefer manual setup on a new system:
 
-# Checkout the content from the repository, it might fail because of already existing config files, you can remove them and try again
+```bash
+# Create config alias
+alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'
+
+# Clone the repository
+git clone --bare https://github.com/Dwarf1er/dotfiles.git $HOME/.config
+
+# Checkout files (backup existing configs if needed)
 config checkout
 
-# Hide all the files that you aren't explicitly tracking from showing as untracked
+# If checkout fails due to existing files:
+config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} {}.backup
+config checkout
+
+# Hide untracked files
 config config --local status.showUntrackedFiles no
+
+# Make alias permanent
+echo "alias config='/usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME'" >> $HOME/.bashrc
 ```
 
-## Manage Git Credentials with libsecret
+## Daily Usage
 
-To manage your git credentials with libsecret run the following commands:
+### Common Commands
+
 ```bash
-# Alternatively, you can use pass instead of gnome-keyring
-sudo pacman -S libsecret gnome-keyring
-cd /usr/share/git/credential/libsecret
-sudo make
-cd ~
-git config --global credential.helper /usr/share/git/credential/libsecret/git-credential-libsecret
+# Check status of tracked files
+config status
+
+# Add new files to track
+config add .config/new-app/config.toml
+
+# Commit changes
+config commit -m "Update configuration"
+
+# Push changes
+config push
+
+# Pull latest changes
+config pull
+
+# View commit history
+config log --oneline
+
+# Show differences
+config diff
 ```
+
+## Customizing Packages
+The setup script manages packages in three categories within the script itself:
+
+`REQUIRED_OFFICIAL`: Essential packages from Arch repositories
+`REQUIRED_AUR`: Essential packages from AUR
+`OPTIONAL_PACKAGES`: Optional packages with descriptions, presented during setup
+
+### Modifying Package Lists
+To customize what gets installed, edit the arrays in `setup.sh`:
+```bash
+# Add to required official packages
+REQUIRED_OFFICIAL=(
+    hyprland
+    # ... existing packages
+    your-new-package
+)
+
+# Add to optional packages with description
+declare -A OPTIONAL_PACKAGES=(
+    # ... existing packages
+    ["your-package"]="Description of package [Official]"
+    ["aur-package"]="Description of AUR package [AUR]"
+)
+```
+
+The `[Official]` or `[AUR]` tags in descriptions determine which package manager is used during installation.
