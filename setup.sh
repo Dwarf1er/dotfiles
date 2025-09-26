@@ -23,6 +23,7 @@ REQUIRED_OFFICIAL=(
     ly
     qt5-wayland
     qt6-wayland
+    qt6ct
     wireplumber
     pipewire
     pipewire-pulse
