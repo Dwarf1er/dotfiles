@@ -83,6 +83,12 @@ declare -A OPTIONAL_PACKAGES=(
     # Communication
     ["signal-desktop"]="Signal messenger [Official]"
     ["vesktop"]="Vesktop discord client [AUR]"
+
+    # Battery management
+    ["tlp"]="TLP battery optimization [Official]"
+    ["tlp-rdw"]="Radio devices optimization [Official]"
+    ["smartmontools"]="Disk optimization [Official]"
+    ["ethtool"]="Ethernet optimization [Official]"
 )
 
 install_packages() {
@@ -144,8 +150,12 @@ setup_dotfiles() {
     
     config config --local status.showUntrackedFiles no
 
-    sudo cp "$HOME/.config/system-config/boot/loader/loader.conf" /boot/loader/loader.conf
-    
+    sudo rm /boot/loader/loader.conf
+    sudo ln -s "$HOME/.config/system-config/boot/loader/loader.conf" /boot/loader/loader.conf
+
+    sudo rm /etc/tlp.conf
+    sudo ln -s ~/.config/tlp/tlp.conf /etc/tlp.conf
+
     log_info "Dotfiles setup complete!"
 }
 
