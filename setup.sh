@@ -82,8 +82,7 @@ declare -A OPTIONAL_PACKAGES=(
     
     # Communication
     ["signal-desktop"]="Signal messenger [Official]"
-    ["discord"]="Discord chat application [Official]"
-    ["vencord-bin"]="Discord client modification [AUR]"
+    ["vesktop"]="Vesktop discord client [AUR]"
 )
 
 install_packages() {
