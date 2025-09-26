@@ -3,19 +3,23 @@
 A comprehensive dotfiles management system using a git bare repository for tracking configuration files and an automated setup script for new system installations.
 
 ## Table of Contents
-
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Manual Setup](#manual-setup)
-  - [Initial Repository Setup](#initial-repository-setup)
-  - [SSH Key Setup](#ssh-key-setup)
-  - [Tracking Files](#tracking-files)
-- [New System Setup](#new-system-setup)
-  - [Automated Setup](#automated-setup)
-  - [Manual Configuration](#manual-configuration)
-- [Daily Usage](#daily-usage)
-- [Customizing Packages](#customizing-packages)
-    - [Modifying Pacakge Lists](#modifying-package-lists) 
+- [Dotfiles](#dotfiles)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Quick Start](#quick-start)
+    - [New System Setup (Recommended)](#new-system-setup-recommended)
+    - [Importing Only Dotfiles](#importing-only-dotfiles)
+  - [Manual Setup](#manual-setup)
+    - [Initial Repository Setup](#initial-repository-setup)
+    - [SSH Key Setup](#ssh-key-setup)
+    - [Tracking Files](#tracking-files)
+  - [New System Setup](#new-system-setup)
+    - [Automated Setup](#automated-setup)
+    - [Manual Configuration](#manual-configuration)
+  - [Daily Usage](#daily-usage)
+    - [Common Commands](#common-commands)
+  - [Customizing Packages](#customizing-packages)
+    - [Modifying Package Lists](#modifying-package-lists)
 
 ## Overview
 
@@ -39,7 +43,7 @@ bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/ma
 ```
 
 > [!WARNING]
-> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is not made automatically because I prefer to always start fresh on new systems.
+> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is **not** made automatically because I prefer to always start fresh on new systems.
 
 This will:
 1. Update your system
@@ -47,6 +51,16 @@ This will:
 3. Present optional packages for selection
 4. Clone and configure dotfiles
 5. Set up the `config` alias for dotfiles management
+
+### Importing Only Dotfiles
+
+If you only want to setup the dotfiles use this automated script:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/dotfiles.sh) "https://github.com/Dwarf1er/dotfiles.git"
+```
+> [!WARNING]
+> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is **not** made automatically because I prefer to always start fresh on new systems.
+
 
 ## Manual Setup
 
