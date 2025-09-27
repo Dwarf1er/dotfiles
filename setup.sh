@@ -26,6 +26,7 @@ REQUIRED_OFFICIAL=(
     qt5-wayland
     qt6-wayland
     qt6ct
+    adw-gtk-theme
     wireplumber
     pipewire
     pipewire-pulse
@@ -50,8 +51,10 @@ REQUIRED_AUR=(
     hyprlock
     waybar
     mako
+    wlogout
     hypridle
     hyprpaper
+    hyprpicker
     pwvucontrol
     nmgui-bin
 )
