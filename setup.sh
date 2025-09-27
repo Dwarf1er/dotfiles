@@ -29,8 +29,6 @@ REQUIRED_OFFICIAL=(
     pipewire-pulse
     pipewire-alsa
     networkmanager
-    nm-connection-editor
-    network-manager-applet
     kitty
     dolphin
     wofi
@@ -53,6 +51,7 @@ REQUIRED_AUR=(
     hypridle
     hyprpaper
     pwvucontrol
+    nmgui-bin
 )
 
 # Define optional packages with their descriptions and repo type
