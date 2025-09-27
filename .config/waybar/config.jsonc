@@ -1,10 +1,11 @@
 {
+  "layer": "top",
   "position": "top",
-  "height": 35,
+  "height": 40,
   "spacing": 4,
-  "modules-left": ["hyprland/workspaces", "hyprland/window"],
+  "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["tray", "bluetooth", "network", "pulseaudio", "battery"],
+  "modules-right": ["keyboard-state", "bluetooth", "network", "wireplumber", "battery"],
 
   "hyprland/workspaces": {
     "disable-scroll": true,
@@ -22,17 +23,6 @@
       "9": "9",
       "10": "10"
     }
-  },
-
-  "hyprland/window": {
-    "format": "{}",
-    "max-length": 50,
-    "separate-outputs": true
-  },
-
-  "tray": {
-    "icon-size": 16,
-    "spacing": 8
   },
 
   "clock": {
@@ -55,56 +45,59 @@
   },
 
   "battery": {
-    "states": {
-      "warning": 30,
-      "critical": 15
-    },
     "format": "{icon}  {capacity}%",
-    "format-warning": "{icon}  {capacity}%",
-    "format-critical": "{icon}  {capacity}%",
-    "format-charging": "  {capacity}%",
-    "format-plugged": "  {capacity}%",
-    "format-alt": "{icon}  {time}",
-    "format-full": "  {capacity}%",
-    "format-icons": ["", "", "", "", ""],
-    "tooltip-format": "{timeTo}\nPower: {power}W"
+    "format-icons": {
+      "charging": [
+        "󰢜","󰂆","󰂇","󰂈","󰢝","󰂉","󰢞","󰂊","󰂋","󰂅"
+      ],
+      "default": [
+        "󰁺","󰁻","󰁼","󰁽","󰁾","󰁿","󰂀","󰂁","󰂂","󰁹"
+      ]
+    },
+    "format-full": "Charged ",
+    "interval": 5,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "tooltip": true
   },
 
   "network": {
-    "format-wifi": "  {essid}",
-    "format-ethernet": "󰤭  Connected", 
-    "format-linked": "󰤭  {ifname} (No IP)",
-    "format-disconnected": "  Disconnected",
-    "tooltip-format-wifi": "Signal: {signalStrength}% | {frequency}MHz\nIP: {ipaddr}/{cidr}",
-    "tooltip-format-ethernet": "IP: {ipaddr}/{cidr}",
-    "on-click": "nm-connection-editor"
+    "format-wifi": "{icon}",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format-ethernet": "󰀂",
+    "format-alt": "󱛇",
+    "format-disconnected": "󰖪",
+    "tooltip-format-wifi": "{icon} {essid}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "󰀂  {ifname}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "nmgui"
   },
 
-  "pulseaudio": {
+  "wireplumber": {
+    "format": "\udb81\udd7e {volume}%",
+    "max-volume": 100,
     "scroll-step": 5,
-    "format": "{icon}  {volume}%",
-    "format-muted": "  Muted",
-    "format-icons": {
-      "headphone": "",
-      "hands-free": "󰂑",
-      "headset": "󰂑", 
-      "phone": "",
-      "portable": "",
-      "car": "",
-      "default": ["", "", ""]
-    },
+    "on-scroll-down": "wpctl set-volume --limit 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
     "on-click": "pwvucontrol",
-    "on-click-right": "playerctl play-pause",
-    "tooltip-format": "Volume: {volume}%"
+    "tooltip-format": "{volume}%"
+  },
+
+  "keyboard-state": {
+    "numlock": true,
+    "capslock": true,
+    "format": " {layout}"
   },
 
   "bluetooth": {
-    "format": "",
-    "format-disabled": "󰂲",
-    "format-connected": " {num_connections}",
-    "tooltip-format": "{controller_alias}\t{controller_address}",
-    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "format": "{icon}",
+    "format-icons": {
+      "enabled": "",
+      "disabled": "󰂲"
+    },
+    "tooltip-format": "{status}",
     "on-click": "blueman-manager"
   }
 }
