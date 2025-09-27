@@ -18,6 +18,7 @@ log_error() {
 }
 
 REQUIRED_OFFICIAL=(
+    openssh
     hyprland
     xdg-desktop-portal-hyprland
     ly
