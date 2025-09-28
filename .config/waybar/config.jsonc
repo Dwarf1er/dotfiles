@@ -5,7 +5,7 @@
   "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["keyboard-state", "bluetooth", "network", "wireplumber", "battery"],
+  "modules-right": ["hyprland/language", "bluetooth", "network", "wireplumber", "battery", "custom/power"],
 
   "hyprland/workspaces": {
     "disable-scroll": true,
@@ -77,18 +77,21 @@
 
   "wireplumber": {
     "format": "\udb81\udd7e {volume}%",
+    "format-muted": " {volume}%",
     "max-volume": 100,
     "scroll-step": 5,
     "on-scroll-down": "wpctl set-volume --limit 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
     "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
     "on-click": "pwvucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
     "tooltip-format": "{volume}%"
   },
 
-  "keyboard-state": {
-    "numlock": true,
-    "capslock": true,
-    "format": " {layout}"
+  "hyprland/language": {
+      "format": " {}",
+      "format-en": "EN",
+      "format-fr": "FR",
+      "format-kr": "KR"
   },
 
   "bluetooth": {
@@ -99,5 +102,11 @@
     },
     "tooltip-format": "{status}",
     "on-click": "blueman-manager"
-  }
+  },
+
+  "custom/power": {
+      "format": "⏻",
+      "on-click": "wlogout",
+      "interval": "once"
+    }
 }
