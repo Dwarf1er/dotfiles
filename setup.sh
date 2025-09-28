@@ -20,6 +20,7 @@ log_error() {
 REQUIRED_OFFICIAL=(
     openssh
     hyprland
+    archlinux-xdg-menu
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
     ly
@@ -159,6 +160,8 @@ setup_dotfiles() {
 
     sudo rm /etc/tlp.conf
     sudo ln -s ~/.config/tlp/tlp.conf /etc/tlp.conf
+
+    sudo mv /etc/xdg/menus/arch-applications.menu /etc/xdg/menus/applications.menu
 
     log_info "Dotfiles setup complete!"
 }
