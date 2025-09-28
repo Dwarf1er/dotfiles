@@ -44,6 +44,8 @@ REQUIRED_OFFICIAL=(
     wl-clipboard
     mpv
     gwenview
+    starship
+    fastfetch
 )
 
 REQUIRED_AUR=(
