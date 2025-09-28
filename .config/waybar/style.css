@@ -28,6 +28,7 @@ window#waybar {
     border: 2px solid @nord8;
     margin: 8px;
     padding: 0 10px;
+    border-radius: 12px;
 }
 
 /* Workspaces */
@@ -99,8 +100,10 @@ window#waybar {
 /* Module styling */
 #battery,
 #network, 
-#pulseaudio,
-#bluetooth {
+#wireplumber,
+#bluetooth,
+#language,
+#custom-power {
     background: transparent;
     color: @nord4;
     padding: 4px 8px;
@@ -140,15 +143,15 @@ window#waybar {
     color: @nord11;
 }
 
-#pulseaudio {
+#wireplumber {
     color: @nord15;
 }
 
-#pulseaudio:hover {
+#wireplumber:hover {
     border: 1px solid @nord15;
 }
 
-#pulseaudio.muted {
+#wireplumber.muted {
     color: @nord11;
 }
 
@@ -162,6 +165,27 @@ window#waybar {
 
 #bluetooth.disabled {
     color: @nord3;
+}
+
+/* Language/Keyboard layout */
+#language {
+    color: @nord7;
+}
+
+#language:hover {
+    border: 1px solid @nord7;
+}
+
+/* Power button */
+#custom-power {
+    color: @nord11;
+    font-size: 16px;
+    padding: 4px 10px;
+}
+
+#custom-power:hover {
+    border: 1px solid @nord11;
+    background-color: rgba(191, 97, 106, 0.1);
 }
 
 /* Animations */
