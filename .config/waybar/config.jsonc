@@ -7,10 +7,11 @@
   "modules-center": ["clock"],
   "modules-right": ["hyprland/language", "bluetooth", "network", "wireplumber", "battery", "custom/power"],
 
-  "hyprland/workspaces": {
-      "disable-scroll": true,
-      "all-outputs": true,
-      "format": "{name}"
+
+    "hyprland/workspaces": {
+        "on-click": "activate",
+        "format": "{icon}",
+		"all-outputs": true
     },
 
   "clock": {

@@ -26,9 +26,6 @@ window#waybar {
     background-color: @nord0;
     color: @nord4;
     border: 2px solid @nord8;
-    margin: 8px;
-    padding: 0 10px;
-    border-radius: 12px;
 }
 
 /* Workspaces */
