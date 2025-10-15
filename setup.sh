@@ -86,6 +86,7 @@ declare -A OPTIONAL_PACKAGES=(
     
     # Office & Productivity
     ["libreoffice-fresh"]="Office suite [Official]"
+    ["brave-bin"]="Brave browser [AUR]"
     
     # Communication
     ["signal-desktop"]="Signal messenger [Official]"
