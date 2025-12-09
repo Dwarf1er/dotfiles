@@ -1,14 +1,16 @@
 # Dotfiles
 
-A comprehensive dotfiles management system using a git bare repository for tracking configuration files and an automated setup script for new system installations.
+A comprehensive dotfiles management system using a git bare repository for tracking configuration files and an automated setup script for new system installations. Designed to be universal so anyone can fork and use it for their own dotfiles repository.
 
 ## Table of Contents
 - [Dotfiles](#dotfiles)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
+    - [Universal Use](#universal-use)
   - [Quick Start](#quick-start)
     - [New System Setup (Recommended)](#new-system-setup-recommended)
     - [Importing Only Dotfiles](#importing-only-dotfiles)
+  - [Backup and Conflict Handling](#backup-and-conflict-handling)
   - [Manual Setup](#manual-setup)
     - [Initial Repository Setup](#initial-repository-setup)
     - [SSH Key Setup](#ssh-key-setup)
@@ -32,6 +34,11 @@ The setup includes:
 - **Kitty** terminal
 - Automated installation script with package management
 
+### Universal Use
+
+You can fork this repository and replace the package lists with your own.  
+The same `setup.sh` and `dotfiles.sh` scripts will work for your custom dotfiles repository.
+
 ## Quick Start
 
 ### New System Setup (Recommended)
@@ -43,7 +50,7 @@ bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/ma
 ```
 
 > [!WARNING]
-> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is **not** made automatically because I prefer to always start fresh on new systems.
+> All conflicting files will be moved to `~/dotfiles-conflicts`. A full backup is also created in `~/dotfiles-backup-TIMESTAMP`.
 
 This will:
 1. Update your system
@@ -59,8 +66,15 @@ If you only want to setup the dotfiles use this automated script:
 bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/dotfiles.sh) "https://github.com/Dwarf1er/dotfiles.git"
 ```
 > [!WARNING]
-> The setup script will delete all of `~/.config` and `~/.bashrc` before starting to avoid creating conflicts. A backup is **not** made automatically because I prefer to always start fresh on new systems.
+> All conflicting files will be moved to `~/dotfiles-conflicts`. A full backup is also created in `~/dotfiles-backup-TIMESTAMP`.
 
+## Backup and Conflict Handling
+
+This setup is non-destructive. When files conflict during checkout:
+
+- Conflicting files are moved to `~/dotfiles-conflicts`.  
+- A full backup of existing configuration files is created in `~/dotfiles-backup-TIMESTAMP`.  
+- This ensures you can always recover previous configurations without risk of data loss.
 
 ## Manual Setup
 
@@ -212,3 +226,8 @@ declare -A OPTIONAL_PACKAGES=(
 ```
 
 The `[Official]` or `[AUR]` tags in descriptions determine which package manager is used during installation.
+
+Notes:
+- Universal: Anyone can fork this repository, replace the package lists, and re-use the same scripts
+- Non-destructive: Your existing configurations are never overwritten without backup. Conflicts are stored in `~/dotfiles-conflicts`
+- Interactive: Optional packages are selectable via a TUI (whiptail)
