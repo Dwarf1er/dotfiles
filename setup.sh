@@ -184,6 +184,17 @@ is_aur_package() {
     [[ "${OPTIONAL_PACKAGES[$pkg]}" == *"[AUR]"* ]]
 }
 
+enable_multilib_if_needed() {
+    for pkg in "$@"; do
+        if [[ "$pkg" == "steam" ]]; then
+            log_info "Steam selected — enabling multilib..."
+            sudo sed -i '/^\#\[multilib\]/, /^\#Include = \/etc\/pacman.d\/mirrorlist/ s/^\#//' /etc/pacman.conf
+            sudo pacman -Sy
+            return
+        fi
+    done
+}
+
 select_optional_packages() {
     if whiptail --title "Optional Packages" \
         --yesno "Install ALL optional packages or SELECT specific ones?\n\nYes = Install All\nNo = Select Specific" 10 60; then
@@ -248,6 +259,7 @@ select_optional_packages() {
     done
     
     if [ ${#official_packages[@]} -gt 0 ]; then
+        enable_multilib_if_needed "${official_packages[@]}"
         log_info "Installing selected official packages: ${official_packages[*]}"
         install_packages "official" "${official_packages[@]}"
     fi
