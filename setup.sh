@@ -5,17 +5,9 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
-
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
-
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+log_info()  { echo -e "${GREEN}[INFO]${NC} $1"; }
+log_warn()  { echo -e "${YELLOW}[WARN]${NC} $1"; }
+log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 REQUIRED_OFFICIAL=(
     openssh
@@ -62,37 +54,23 @@ REQUIRED_AUR=(
     nmgui-bin
 )
 
-# Define optional packages with their descriptions and repo type
 declare -A OPTIONAL_PACKAGES=(
-    # Development
     ["go"]="Golang programming language [Official]"
     ["godot"]="Godot game engine [Official]"
     ["neovim-nightly-bin"]="Neovim nightly build [AUR]"
-    
-    # Gaming
     ["steam"]="Steam gaming platform [Official]"
-    
-    # Media & Graphics
     ["gimp"]="GNU Image Manipulation Program [Official]"
     ["inkscape"]="Vector graphics editor [Official]"
     ["obs-studio"]="Open Broadcaster Software [Official]"
     ["audacity"]="Audio editor [Official]"
     ["blender"]="3D creation suite [Official]"
     ["kdenlive"]="Video editor [Official]"
-    
-    # 3D Printing
     ["freecad"]="Parametric 3D CAD modeler [Official]"
     ["orca-slicer-bin"]="3D printer slicer [AUR]"
-    
-    # Office & Productivity
     ["libreoffice-fresh"]="Office suite [Official]"
     ["brave-bin"]="Brave browser [AUR]"
-    
-    # Communication
     ["signal-desktop"]="Signal messenger [Official]"
     ["vesktop"]="Vesktop discord client [AUR]"
-
-    # Battery management
     ["tlp"]="TLP battery optimization [Official]"
     ["tlp-rdw"]="Radio devices optimization [Official]"
     ["smartmontools"]="Disk optimization [Official]"
@@ -100,211 +78,142 @@ declare -A OPTIONAL_PACKAGES=(
 )
 
 install_packages() {
-    local repo="$1"
-    shift
-    for package in "$@"; do
-        if ! pacman -Qs "^${package}$" &> /dev/null; then
-            log_info "$package is not installed. Installing $package..."
+    local repo="$1"; shift
+    for pkg in "$@"; do
+        if ! pacman -Qs "^${pkg}$" &>/dev/null; then
+            log_info "Installing $pkg"
             if [ "$repo" = "aur" ]; then
-                paru -S --noconfirm "$package"
+                paru -S --noconfirm "$pkg"
             else
-                sudo pacman -S --noconfirm "$package"
+                sudo pacman -S --noconfirm "$pkg"
             fi
         else
-            log_info "$package is already installed."
+            log_info "$pkg is already installed."
         fi
     done
 }
 
 install_paru() {
-    if ! command -v paru &> /dev/null; then
-        log_info "Installing paru AUR helper..."
-        sudo pacman -S --needed base-devel git
-        cd /tmp
-        git clone https://aur.archlinux.org/paru.git
-        cd paru
+    if ! command -v paru &>/dev/null; then
+        log_info "Installing paru AUR helper"
+        sudo pacman -S --needed base-devel git --noconfirm
+        tmpdir=$(mktemp -d)
+        git clone https://aur.archlinux.org/paru.git "$tmpdir/paru"
+        cd "$tmpdir/paru"
         makepkg -si --noconfirm
         cd ~
-        rm -rf /tmp/paru
-    else
-        log_info "paru is already installed."
+        rm -rf "$tmpdir"
     fi
 }
 
 install_whiptail() {
-    if ! command -v whiptail &> /dev/null; then
-        log_info "Installing whiptail for package selection..."
+    if ! command -v whiptail &>/dev/null; then
+        log_info "Installing whiptail"
         sudo pacman -S --noconfirm libnewt
     fi
 }
 
+backup_dotfiles() {
+    local backup_dir="$HOME/dotfiles-backup-$(date +%Y%m%d%H%M%S)"
+    mkdir -p "$backup_dir"
+    if [ -d "$HOME/.config" ]; then cp -r "$HOME/.config" "$backup_dir/"; fi
+    for f in .bashrc README.md setup.sh; do [ -f "$HOME/$f" ] && cp "$HOME/$f" "$backup_dir/"; done
+}
+
 setup_dotfiles() {
     local git_repo_url="$1"
-    
-    log_info "Setting up dotfiles..."
-    
-    rm -rf $HOME/.config
-    rm -f $HOME/.bashrc
-    rm -f $HOME/README.md
-    rm -f $HOME/setup.sh
-    
-    git clone --bare "$git_repo_url" $HOME/.config
-    
-    config() {
-        /usr/bin/git --git-dir=$HOME/.config/ --work-tree=$HOME "$@"
-    }
-    
-    config checkout
-    
+    log_info "Setting up dotfiles"
+    backup_dotfiles
+    git clone --bare "$git_repo_url" "$HOME/.config"
+    config() { /usr/bin/git --git-dir="$HOME/.config/" --work-tree="$HOME" "$@"; }
+    if ! config checkout 2>&1; then
+        log_warn "Conflicts detected. Moving existing files to $HOME/dotfiles-conflicts"
+        mkdir -p "$HOME/dotfiles-conflicts"
+        config checkout 2>&1 | grep -E "\s+\." | awk '{print $1}' | while read -r file; do mv "$HOME/$file" "$HOME/dotfiles-conflicts/"; done
+        config checkout
+    fi
     config config --local status.showUntrackedFiles no
-
-    sudo rm /boot/loader/loader.conf
-    sudo ln -s "$HOME/.config/system-config/boot/loader/loader.conf" /boot/loader/loader.conf
-
-    sudo rm /etc/tlp.conf
-    sudo ln -s ~/.config/tlp/tlp.conf /etc/tlp.conf
-
-    sudo mv /etc/xdg/menus/arch-applications.menu /etc/xdg/menus/applications.menu
-
-    log_info "Dotfiles setup complete!"
+    sudo mkdir -p /boot/loader
+    sudo ln -sfn "$HOME/.config/system-config/boot/loader/loader.conf" /boot/loader/loader.conf
+    sudo ln -sfn "$HOME/.config/tlp/tlp.conf" /etc/tlp.conf
+    sudo mv /etc/xdg/menus/arch-applications.menu /etc/xdg/menus/applications.menu || true
 }
 
-install_required_packages() {
-    log_info "Installing required packages..."
-    
-    log_info "Installing required official packages..."
-    install_packages "official" "${REQUIRED_OFFICIAL[@]}"
-    
-    log_info "Installing required AUR packages..."
-    install_packages "aur" "${REQUIRED_AUR[@]}"
-}
-
-is_aur_package() {
-    local pkg="$1"
-    [[ "${OPTIONAL_PACKAGES[$pkg]}" == *"[AUR]"* ]]
-}
+is_aur_package() { [[ "${OPTIONAL_PACKAGES[$1]}" == *"[AUR]"* ]]; }
 
 enable_multilib_if_needed() {
     for pkg in "$@"; do
-        if [[ "$pkg" == "steam" ]]; then
-            log_info "Steam selected — enabling multilib..."
+        [[ "$pkg" == "steam" ]] && {
+            log_info "Steam selected: enabling multilib"
             sudo sed -i '/^\#\[multilib\]/, /^\#Include = \/etc\/pacman.d\/mirrorlist/ s/^\#//' /etc/pacman.conf
-            sudo pacman -Sy
+            sudo pacman -Sy --noconfirm
             return
-        fi
+        }
     done
 }
 
 select_optional_packages() {
-    if whiptail --title "Optional Packages" \
-        --yesno "Install ALL optional packages or SELECT specific ones?\n\nYes = Install All\nNo = Select Specific" 10 60; then
-        
-        log_info "Installing all optional packages..."
-        
-        local official_packages=()
-        local aur_packages=()
-        
+    if whiptail --title "Optional Packages" --yesno "Install ALL optional packages or SELECT specific ones?\nYes = All, No = Select" 10 60; then
+        log_info "Installing all optional packages"
+        local official=() aur=()
         for pkg in "${!OPTIONAL_PACKAGES[@]}"; do
-            if is_aur_package "$pkg"; then
-                aur_packages+=("$pkg")
-            else
-                official_packages+=("$pkg")
-            fi
+            is_aur_package "$pkg" && aur+=("$pkg") || official+=("$pkg")
         done
-        
-        if [ ${#official_packages[@]} -gt 0 ]; then
-            install_packages "official" "${official_packages[@]}"
-        fi
-        
-        if [ ${#aur_packages[@]} -gt 0 ]; then
-            install_packages "aur" "${aur_packages[@]}"
-        fi
-            
-        return 0
+        enable_multilib_if_needed "${official[@]}"
+        install_packages "official" "${official[@]}"
+        install_packages "aur" "${aur[@]}"
+        return
     fi
-    
-    local whiptail_options=()
+
+    local whiptail_opts=()
     for pkg in "${!OPTIONAL_PACKAGES[@]}"; do
-        whiptail_options+=("$pkg" "${OPTIONAL_PACKAGES[$pkg]}" OFF)
+        whiptail_opts+=("$pkg" "${OPTIONAL_PACKAGES[$pkg]}" OFF)
     done
-    
-    local selections=$(whiptail --title "Optional Packages" \
-        --checklist "Select packages to install (SPACE=toggle, TAB=navigate, ENTER=confirm):" \
-        25 90 15 \
-        "${whiptail_options[@]}" \
-        3>&1 1>&2 2>&3)
-    
-    if [ $? -ne 0 ]; then
-        log_info "Package selection cancelled."
-        return 1
-    fi
-    
-    if [ -z "$selections" ]; then
-        log_info "No packages selected."
-        return 0
-    fi
-    
+
+    local selections
+    selections=$(whiptail --title "Optional Packages" --checklist "Select packages (SPACE=toggle, ENTER=confirm):" 25 90 15 "${whiptail_opts[@]}" 3>&1 1>&2 2>&3)
+    [ $? -ne 0 ] && { log_info "Package selection cancelled."; return; }
+
+    [ -z "$selections" ] && { log_info "No optional packages selected."; return; }
+
     selections=$(echo "$selections" | tr -d '"')
-    IFS=' ' read -ra selected_packages <<< "$selections"
-    
-    local official_packages=()
-    local aur_packages=()
-    
-    for pkg in "${selected_packages[@]}"; do
-        if is_aur_package "$pkg"; then
-            aur_packages+=("$pkg")
-        else
-            official_packages+=("$pkg")
-        fi
+    IFS=' ' read -ra selected <<< "$selections"
+
+    local official=() aur=()
+    for pkg in "${selected[@]}"; do
+        is_aur_package "$pkg" && aur+=("$pkg") || official+=("$pkg")
     done
-    
-    if [ ${#official_packages[@]} -gt 0 ]; then
-        enable_multilib_if_needed "${official_packages[@]}"
-        log_info "Installing selected official packages: ${official_packages[*]}"
-        install_packages "official" "${official_packages[@]}"
-    fi
-    
-    if [ ${#aur_packages[@]} -gt 0 ]; then
-        log_info "Installing selected AUR packages: ${aur_packages[*]}"
-        install_packages "aur" "${aur_packages[@]}"
-    fi
-    
-    log_info "Selected package installation complete!"
+
+    enable_multilib_if_needed "${official[@]}"
+    [ ${#official[@]} -gt 0 ] && install_packages "official" "${official[@]}"
+    [ ${#aur[@]} -gt 0 ] && install_packages "aur" "${aur[@]}"
 }
 
 main() {
-    if [ -z "$1" ]; then
-        echo "Usage: $0 <git-repo-url>"
-        exit 1
-    fi
-    
+    [ "$EUID" -eq 0 ] && { log_error "Do not run this script as root!"; exit 1; }
+    [ -z "$1" ] && { echo "Usage: $0 <git-repo-url>"; exit 1; }
     local git_repo_url="$1"
-    
-    log_info "Starting full system setup..."
-    
-    log_info "Updating system..."
+
+    log_info "Updating system"
     sudo pacman -Syu --noconfirm
-    
-    log_info "Installing essential packages..."
+
+    log_info "Installing essential packages"
     install_packages "official" git base-devel
-    
+
     install_paru
     install_whiptail
-    
-    install_required_packages
-    select_optional_packages
-    
-    setup_dotfiles "$git_repo_url"
-    
-    log_info "Refreshing font cache..."
-    fc-cache -fv
-    
-    log_info "Setup complete! Please reboot to ensure all changes take effect."
-}
 
-if [ "$EUID" -eq 0 ]; then
-    log_error "Please do not run this script as root!"
-    exit 1
-fi
+    log_info "Installing required packages"
+    install_packages "official" "${REQUIRED_OFFICIAL[@]}"
+    install_packages "aur" "${REQUIRED_AUR[@]}"
+
+    select_optional_packages
+    setup_dotfiles "$git_repo_url"
+
+    log_info "Refreshing font cache"
+    fc-cache -fv
+
+    log_info "Setup complete! Please reboot to apply changes."
+}
 
 main "$@"
