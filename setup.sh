@@ -207,6 +207,12 @@ main() {
     install_packages "official" "${REQUIRED_OFFICIAL[@]}"
     install_packages "aur" "${REQUIRED_AUR[@]}"
 
+    log_info "Enabling and starting PipeWire and WirePlumber services"
+    systemctl --user enable pipewire
+    systemctl --user start pipewire
+    systemctl --user enable wireplumber
+    systemctl --user start wireplumber
+
     select_optional_packages
     setup_dotfiles "$git_repo_url"
 
