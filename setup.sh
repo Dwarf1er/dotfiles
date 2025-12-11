@@ -33,6 +33,9 @@ REQUIRED_OFFICIAL=(
     git
     ttf-font-awesome
     ttf-d2coding-nerd
+    noto-fonts
+    noto-fonts-emoji
+    noto-fonts-cjk
     wl-clipboard
     mpv
     gwenview
