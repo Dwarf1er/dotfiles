@@ -257,14 +257,6 @@ EOF
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     
     log_info "GRUB configuration updated to include Timeshift snapshots."
-    
-    log_info "Checking status of systemd timer:"
-    
-    systemctl list-timers timeshift-daily.timer
-    
-    log_info "Test pacman hook by running a system update"
-    
-    sudo pacman -Syu
 }
 
 main() {
