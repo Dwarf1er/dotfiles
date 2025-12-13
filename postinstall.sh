@@ -35,6 +35,7 @@ REQUIRED_OFFICIAL=(
     brightnessctl
     playerctl
     git
+    jq
     ttf-font-awesome
     ttf-d2coding-nerd
     noto-fonts
@@ -222,7 +223,15 @@ select_optional_packages() {
 }
 
 setup_snapshots() {
-log_info "Creating pacman hook to create Timeshift snapshot before update"
+    log_info "Creating inital timeshift snapshot"
+    
+    timeshift --create --comments "Initial system setup snapshot"
+
+    log_info "Configuring Timeshift to take daily snapshots and retain 5 snapshots"
+
+    sudo jq '.schedule_daily = "true" | .count_daily = 5' /etc/timeshift/timeshift.json | sudo tee /etc/timeshift/timeshift.json > /dev/null
+    
+    log_info "Creating pacman hook to create Timeshift snapshot before update"
 
 sudo tee /etc/pacman.d/hooks/99-timeshift-pre-update.hook << EOF
 [Trigger]
@@ -236,58 +245,26 @@ When = PreTransaction
 Exec = /usr/bin/timeshift --create --comments "Pre-update snapshot" --tags D
 EOF
 
-log_info "Pacman hook created"
-
-log_info "Creating systemd service for daily snapshot creation"
-
-sudo tee /etc/systemd/system/timeshift-daily.service << EOF
-[Unit]
-Description=Create Timeshift Snapshot
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/timeshift --create --tags D
-EOF
-
-log_info "Creating systemd timer for daily snapshot..."
-
-sudo tee /etc/systemd/system/timeshift-daily.timer << EOF
-[Unit]
-Description=Run Timeshift Snapshot Daily
-
-[Timer]
-OnCalendar=daily
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-EOF
-
-log_info "Enabling and starting the systemd timer"
-
-sudo systemctl enable --now timeshift-daily.timer
-
-log_info "Modifying grub-btrfsd service to detect Timeshift snapshots"
-
-log_info "Modifying grub-btrfsd service to detect Timeshift snapshots automatically..."
-
-sudo sed -i 's|^ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots|ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto|' /etc/systemd/system/grub-btrfsd.service
-
-log_info "grub-btrfsd service modified to use --timeshift-auto"
-
-log_info "Updating GRUB configuration"
-
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-log_info "GRUB configuration updated to include Timeshift snapshots."
-
-log_info "Checking status of systemd timer:"
-
-systemctl list-timers timeshift-daily.timer
-
-log_info "Test pacman hook by running a system update"
-
-sudo pacman -Syu
+    log_info "Pacman hook created"
+    log_info "Modifying grub-btrfsd service to detect Timeshift snapshots automatically"
+    
+    sudo sed -i 's|^ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots|ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto|' /etc/systemd/system/grub-btrfsd.service
+    
+    log_info "grub-btrfsd service modified to use --timeshift-auto"
+    
+    log_info "Updating GRUB configuration"
+    
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+    
+    log_info "GRUB configuration updated to include Timeshift snapshots."
+    
+    log_info "Checking status of systemd timer:"
+    
+    systemctl list-timers timeshift-daily.timer
+    
+    log_info "Test pacman hook by running a system update"
+    
+    sudo pacman -Syu
 }
 
 main() {
