@@ -225,7 +225,7 @@ select_optional_packages() {
 setup_snapshots() {
     log_info "Creating inital timeshift snapshot"
     
-    sudo timeshift
+    sudo timeshift --create --btrfs
 
     log_info "Configuring Timeshift to take daily snapshots and retain 5 snapshots"
 
