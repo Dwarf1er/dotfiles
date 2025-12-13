@@ -269,16 +269,13 @@ sudo systemctl enable --now timeshift-daily.timer
 
 log_info "Modifying grub-btrfsd service to detect Timeshift snapshots"
 
-sudo systemctl edit --full grub-btrfsd
+log_info "Modifying grub-btrfsd service to detect Timeshift snapshots automatically..."
 
-# In the editor, change:
-# ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots
-# to:
-# ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+sudo sed -i 's|^ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots|ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto|' /etc/systemd/system/grub-btrfsd.service
 
-log_info "Please modify the ExecStart line as mentioned above, then save and exit the editor."
+log_info "grub-btrfsd service modified to use --timeshift-auto"
 
-log_info "Updating GRUB configuration..."
+log_info "Updating GRUB configuration"
 
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
