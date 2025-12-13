@@ -293,9 +293,6 @@ main() {
         systemctl --user start pipewire wireplumber
 
         select_optional_packages
-        setup_snapshots
-    else
-        setup_snapshots
     fi
 
     setup_dotfiles "$git_repo_url"
@@ -303,6 +300,7 @@ main() {
     log_info "Refreshing font cache"
     fc-cache -fv
 
+    setup_snapshots
     log_info "Setup complete! Please reboot to apply changes."
 }
 
