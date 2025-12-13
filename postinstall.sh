@@ -45,6 +45,7 @@ REQUIRED_OFFICIAL=(
     gwenview
     starship
     fastfetch
+    inotify-tools
     timeshift
     grub-btrfs
 )
@@ -221,41 +222,75 @@ select_optional_packages() {
 }
 
 setup_snapshots() {
-    log_info "Configuring Timeshift automatic snapshots and grub-btrfs"
+log_info "Creating pacman hook to create Timeshift snapshot before update"
 
-    if ! sudo btrfs quota show / &>/dev/null; then
-        sudo btrfs quota enable /
-        log_info "BTRFS quotas enabled"
-    else
-        log_info "BTRFS quotas already enabled"
-    fi
-
-    sudo timeshift --create --comments "Initial boot snapshot" --tags B
-
-    sudo systemctl enable --now timeshift.timer
-    log_info "Timeshift timer enabled (automatic snapshots)"
-
-    sudo mkdir -p /etc/pacman.d/hooks
-    HOOK_FILE="/etc/pacman.d/hooks/timeshift-pre-update.hook"
-    sudo tee "$HOOK_FILE" >/dev/null <<EOF
+sudo tee /etc/pacman.d/hooks/99-timeshift-pre-update.hook << EOF
 [Trigger]
 Operation = Upgrade
 Type = Package
 Target = *
 
 [Action]
-Description = Creating Timeshift BTRFS snapshot before system update
+Description = Creating pre-update snapshot with Timeshift
 When = PreTransaction
-Exec = /usr/bin/timeshift --create --comments "Pre-pacman upgrade" --tags D
+Exec = /usr/bin/timeshift --create --comments "Pre-update snapshot" --tags D
 EOF
-    log_info "Pacman pre-update hook created at $HOOK_FILE"
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now grub-btrfs.path
-    log_info "grub-btrfs.path service enabled"
-    
-    sudo grub-mkconfig -o /boot/grub/grub.cfg
-    log_info "GRUB menu updated with current snapshots"
+log_info "Pacman hook created"
+
+log_info "Creating systemd service for daily snapshot creation"
+
+sudo tee /etc/systemd/system/timeshift-daily.service << EOF
+[Unit]
+Description=Create Timeshift Snapshot
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/timeshift --create --tags D
+EOF
+
+log_info "Creating systemd timer for daily snapshot..."
+
+sudo tee /etc/systemd/system/timeshift-daily.timer << EOF
+[Unit]
+Description=Run Timeshift Snapshot Daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+log_info "Enabling and starting the systemd timer"
+
+sudo systemctl enable --now timeshift-daily.timer
+
+log_info "Modifying grub-btrfsd service to detect Timeshift snapshots"
+
+sudo systemctl edit --full grub-btrfsd
+
+# In the editor, change:
+# ExecStart=/usr/bin/grub-btrfsd --syslog /.snapshots
+# to:
+# ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto
+
+log_info "Please modify the ExecStart line as mentioned above, then save and exit the editor."
+
+log_info "Updating GRUB configuration..."
+
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+log_info "GRUB configuration updated to include Timeshift snapshots."
+
+log_info "Checking status of systemd timer:"
+
+systemctl list-timers timeshift-daily.timer
+
+log_info "Test pacman hook by running a system update"
+
+pacman -Syu
 }
 
 main() {
