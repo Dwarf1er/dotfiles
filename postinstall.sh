@@ -41,6 +41,8 @@ REQUIRED_OFFICIAL=(
     gwenview
     starship
     fastfetch
+    timeshift
+    grub-btrfs
 )
 
 REQUIRED_AUR=(
