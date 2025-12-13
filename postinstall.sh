@@ -220,6 +220,40 @@ select_optional_packages() {
     [ ${#aur[@]} -gt 0 ] && install_packages "aur" "${aur[@]}"
 }
 
+setup_snapshots() {
+    log_info "Configuring Timeshift automatic snapshots and grub-btrfs"
+
+    if ! sudo btrfs quota show / &>/dev/null; then
+        sudo btrfs quota enable /
+        log_info "BTRFS quotas enabled"
+    else
+        log_info "BTRFS quotas already enabled"
+    fi
+
+    sudo timeshift --schedule --boot 1 --count 5
+    log_info "Timeshift boot snapshots scheduled"
+
+    HOOK_FILE="/etc/pacman.d/hooks/timeshift-pre-update.hook"
+    sudo tee "$HOOK_FILE" >/dev/null <<'EOF'
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Creating Timeshift BTRFS snapshot before system update
+When = PreTransaction
+Exec = /usr/bin/timeshift --create --comments "Pre-pacman upgrade" --tags D --delete-old 5
+EOF
+    log_info "Pacman pre-update hook created at $HOOK_FILE"
+
+    sudo systemctl enable --now grub-btrfs.path
+    log_info "grub-btrfs.path service enabled and running"
+
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+    log_info "GRUB menu updated with current snapshots"
+}
+
 main() {
     [ "$EUID" -eq 0 ] && { log_error "Do not run this script as root!"; exit 1; }
 
@@ -259,6 +293,9 @@ main() {
         systemctl --user start pipewire wireplumber
 
         select_optional_packages
+        setup_snapshots
+    else
+        setup_snapshots
     fi
 
     setup_dotfiles "$git_repo_url"
