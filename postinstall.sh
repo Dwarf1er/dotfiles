@@ -290,7 +290,7 @@ systemctl list-timers timeshift-daily.timer
 
 log_info "Test pacman hook by running a system update"
 
-pacman -Syu
+sudo pacman -Syu
 }
 
 main() {
