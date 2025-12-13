@@ -214,7 +214,6 @@ select_optional_packages() {
     [ ${#official[@]} -gt 0 ] && install_packages "official" "${official[@]}"
     [ ${#aur[@]} -gt 0 ] && install_packages "aur" "${aur[@]}"
 }
-
 main() {
     [ "$EUID" -eq 0 ] && { log_error "Do not run this script as root!"; exit 1; }
 
@@ -227,6 +226,10 @@ main() {
                 mode="$2"
                 shift 2
                 ;;
+            full|dotfiles)
+                mode="$1"
+                shift
+                ;;
             *)
                 git_repo_url="$1"
                 shift
@@ -234,8 +237,23 @@ main() {
         esac
     done
 
-    [ -z "$git_repo_url" ] && { echo "Usage: $0 <git-repo-url> [--mode full|dotfiles]"; exit 1; }
+    mode="${mode:-full}"
+    
+    if [ -z "$git_repo_url" ]; then
+        git_repo_url=$(git config --get remote.origin.url 2>/dev/null)
+    fi
 
+    if [ -z "$git_repo_url" ] && [[ "$0" =~ https?:// ]]; then
+        git_repo_url="$0"
+        git_repo_url="${git_repo_url%/*/*}"
+        if [[ "$git_repo_url" =~ github.com ]]; then
+            git_repo_url="${git_repo_url/\/raw\//}"
+            git_repo_url="${git_repo_url/\/main/}.git"
+        fi
+    fi
+
+    [ -z "$git_repo_url" ] && { log_error "Could not detect git repo. Provide it as an argument: $0 <git-repo-url> [--mode full|dotfiles]"; exit 1; }
+    
     if [ "$mode" = "full" ]; then
         log_info "Updating system"
         sudo pacman -Syu --noconfirm
