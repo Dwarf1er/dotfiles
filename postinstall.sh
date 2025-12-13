@@ -214,46 +214,27 @@ select_optional_packages() {
     [ ${#official[@]} -gt 0 ] && install_packages "official" "${official[@]}"
     [ ${#aur[@]} -gt 0 ] && install_packages "aur" "${aur[@]}"
 }
+
 main() {
     [ "$EUID" -eq 0 ] && { log_error "Do not run this script as root!"; exit 1; }
 
-    local mode="full"
-    local git_repo_url=""
+    local git_repo_url="$1"
+    local mode="${2:-full}"
 
-    while [ $# -gt 0 ]; do
-        case "$1" in
-            --mode)
-                mode="$2"
-                shift 2
-                ;;
-            full|dotfiles)
-                mode="$1"
-                shift
-                ;;
-            *)
-                git_repo_url="$1"
-                shift
-                ;;
-        esac
-    done
-
-    mode="${mode:-full}"
-    
     if [ -z "$git_repo_url" ]; then
-        git_repo_url=$(git config --get remote.origin.url 2>/dev/null)
+        log_error "Usage:"
+        echo "  $0 <git-repo-url> [full|dotfiles]"
+        exit 1
     fi
 
-    if [ -z "$git_repo_url" ] && [[ "$0" =~ https?:// ]]; then
-        git_repo_url="$0"
-        git_repo_url="${git_repo_url%/*/*}"
-        if [[ "$git_repo_url" =~ github.com ]]; then
-            git_repo_url="${git_repo_url/\/raw\//}"
-            git_repo_url="${git_repo_url/\/main/}.git"
-        fi
-    fi
+    case "$mode" in
+        full|dotfiles) ;;
+        *)
+            log_error "Invalid mode: $mode (use 'full' or 'dotfiles')"
+            exit 1
+            ;;
+    esac
 
-    [ -z "$git_repo_url" ] && { log_error "Could not detect git repo. Provide it as an argument: $0 <git-repo-url> [--mode full|dotfiles]"; exit 1; }
-    
     if [ "$mode" = "full" ]; then
         log_info "Updating system"
         sudo pacman -Syu --noconfirm
@@ -269,10 +250,8 @@ main() {
         install_packages "aur" "${REQUIRED_AUR[@]}"
 
         log_info "Enabling and starting PipeWire and WirePlumber services"
-        systemctl --user enable pipewire
-        systemctl --user start pipewire
-        systemctl --user enable wireplumber
-        systemctl --user start wireplumber
+        systemctl --user enable pipewire wireplumber
+        systemctl --user start pipewire wireplumber
 
         select_optional_packages
     fi
@@ -284,5 +263,6 @@ main() {
 
     log_info "Setup complete! Please reboot to apply changes."
 }
+
 
 main "$@"
