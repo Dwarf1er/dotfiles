@@ -230,11 +230,14 @@ setup_snapshots() {
         log_info "BTRFS quotas already enabled"
     fi
 
-    sudo timeshift --schedule --boot 1 --count 5
-    log_info "Timeshift boot snapshots scheduled"
+    sudo timeshift --create --comments "Initial boot snapshot" --tags B
 
+    sudo systemctl enable --now timeshift.timer
+    log_info "Timeshift timer enabled (automatic snapshots)"
+
+    sudo mkdir -p /etc/pacman.d/hooks
     HOOK_FILE="/etc/pacman.d/hooks/timeshift-pre-update.hook"
-    sudo tee "$HOOK_FILE" >/dev/null <<'EOF'
+    sudo tee "$HOOK_FILE" >/dev/null <<EOF
 [Trigger]
 Operation = Upgrade
 Type = Package
@@ -243,13 +246,14 @@ Target = *
 [Action]
 Description = Creating Timeshift BTRFS snapshot before system update
 When = PreTransaction
-Exec = /usr/bin/timeshift --create --comments "Pre-pacman upgrade" --tags D --delete-old 5
+Exec = /usr/bin/timeshift --create --comments "Pre-pacman upgrade" --tags D
 EOF
     log_info "Pacman pre-update hook created at $HOOK_FILE"
 
+    sudo systemctl daemon-reload
     sudo systemctl enable --now grub-btrfs.path
-    log_info "grub-btrfs.path service enabled and running"
-
+    log_info "grub-btrfs.path service enabled"
+    
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     log_info "GRUB menu updated with current snapshots"
 }
