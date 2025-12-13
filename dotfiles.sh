@@ -12,6 +12,9 @@ backup_dotfiles() {
     if [ -d "$HOME/.config" ]; then
         cp -r "$HOME/.config" "$backup_dir/"
         log_info "Existing .config backed up to $backup_dir/.config"
+
+        rm -rf "$HOME/.config"
+        log_info "Removed existing .config"
     fi
 
     for file in .bashrc README.md setup.sh; do
