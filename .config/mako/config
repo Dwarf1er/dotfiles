@@ -9,7 +9,7 @@ border-radius=15
 icons=0
 max-icon-size=64
 default-timeout=5000
-ignore-timeoout=0
+ignore-timeout=0
 font=monospace 14
 
 [urgency=low]
