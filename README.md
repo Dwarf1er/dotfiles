@@ -1,10 +1,11 @@
 # Dotfiles
 
-A comprehensive dotfiles management system using a git bare repository for tracking configuration files and an automated setup script for new system installations. Designed to be universal so anyone can fork and use it for their own dotfiles repository.
+A comprehensive dotfiles and system post-installation setup using a bare git repository and a single unified `postinstall.sh` script.
+
+Designed to be forkable, non-destructive, and interactive, allowing anyone to reuse the workflow for their own dotfiles and package selections.
 
 ## Table of Contents
 - [Dotfiles](#dotfiles)
-  - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
     - [Universal Use](#universal-use)
   - [Quick Start](#quick-start)
@@ -36,8 +37,8 @@ The setup includes:
 
 ### Universal Use
 
-You can fork this repository and replace the package lists with your own.  
-The same `setup.sh` and `dotfiles.sh` scripts will work for your custom dotfiles repository.
+You can fork this repository and replace the package lists with your own.
+The same `postinstall.sh` script will work for your custom dotfiles repository.
 
 ## Quick Start
 
@@ -46,7 +47,7 @@ The same `setup.sh` and `dotfiles.sh` scripts will work for your custom dotfiles
 The fastest way to set up a new system is using the automated setup script:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/setup.sh) "https://github.com/Dwarf1er/dotfiles.git"
+bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/postinstall.sh) "https://github.com/Dwarf1er/dotfiles.git"
 ```
 
 > [!WARNING]
@@ -61,9 +62,9 @@ This will:
 
 ### Importing Only Dotfiles
 
-If you only want to setup the dotfiles use this automated script:
+If you only want to setup the dotfiles (no package installation):
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/dotfiles.sh) "https://github.com/Dwarf1er/dotfiles.git"
+bash <(curl -s https://raw.githubusercontent.com/Dwarf1er/dotfiles/refs/heads/master/postinstall.sh) "https://github.com/Dwarf1er/dotfiles.git" dotfiles
 ```
 > [!WARNING]
 > All conflicting files will be moved to `~/dotfiles-conflicts`. A full backup is also created in `~/dotfiles-backup-TIMESTAMP`.
@@ -113,9 +114,12 @@ ssh-add ~/.ssh/id_ed25519
 
 # Copy public key to clipboard (requires wl-clipboard)
 wl-copy < ~/.ssh/id_ed25519.pub
+
+# If your dotfiles repo was cloned using HTTPS, update it to SSH
+config remote set-url origin git@github.com:<username>/<repo>.git
 ```
 
-Then add the public key to your account in the SSH keys section.
+Then add the public key to your Github account in the SSH keys section.
 
 ### Tracking Files
 
