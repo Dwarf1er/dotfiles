@@ -233,7 +233,7 @@ setup_snapshots() {
     
     log_info "Creating pacman hook to create Timeshift snapshot before update"
 
-sudo tee /etc/pacman.d/hooks/99-timeshift-pre-update.hook << EOF
+sudo tee /etc/pacman.d/hooks/timeshift-pre-update.hook << EOF
 [Trigger]
 Operation = Upgrade
 Type = Package
