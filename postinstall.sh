@@ -225,7 +225,7 @@ select_optional_packages() {
 setup_snapshots() {
     log_info "Creating inital timeshift snapshot"
     
-    timeshift --create --comments "Initial system setup snapshot"
+    sudo timeshift --create --comments "Initial system setup snapshot"
 
     log_info "Configuring Timeshift to take daily snapshots and retain 5 snapshots"
 
