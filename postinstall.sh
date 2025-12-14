@@ -223,12 +223,13 @@ select_optional_packages() {
 
 setup_snapshots() {
     root_device=$(findmnt -n -o SOURCE / | sed 's/\[\(.*\)\]//')
+    root_uuid=$(blkid -s UUID -o value $root_device)
     
     log_info "Creating Timeshift configuration file"
 
     sudo tee /etc/timeshift/timeshift.json > /dev/null << EOF
 {
-  "backup_device_uuid" : "$root_device",
+  "backup_device_uuid" : "$root_uuid",
   "parent_device_uuid" : "",
   "do_first_run" : "false",
   "btrfs_mode" : "true",
