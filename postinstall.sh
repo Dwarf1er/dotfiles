@@ -85,6 +85,7 @@ declare -A OPTIONAL_PACKAGES=(
     ["tlp-rdw"]="Radio devices optimization [Official]"
     ["smartmontools"]="Disk optimization [Official]"
     ["ethtool"]="Ethernet optimization [Official]"
+    ["homebank"]="Financial planning [Official]"
 )
 
 install_packages() {
