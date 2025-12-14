@@ -35,7 +35,6 @@ REQUIRED_OFFICIAL=(
     brightnessctl
     playerctl
     git
-    jq
     ttf-font-awesome
     ttf-d2coding-nerd
     noto-fonts
@@ -223,13 +222,39 @@ select_optional_packages() {
 }
 
 setup_snapshots() {
+    root_device=$(findmnt -n -o SOURCE / | sed 's/\[\(.*\)\]//')
+    
+    log_info "Creating Timeshift configuration file"
+
+    sudo tee /etc/timeshift/timeshift.json > /dev/null << EOF
+{
+  "backup_device_uuid" : "$root_device",
+  "parent_device_uuid" : "",
+  "do_first_run" : "false",
+  "btrfs_mode" : "true",
+  "include_btrfs_home" : "false",
+  "stop_cron_emails" : "true",
+  "schedule_monthly" : "false",
+  "schedule_weekly" : "false",
+  "schedule_daily" : "true",
+  "schedule_hourly" : "false",
+  "schedule_boot" : "false",
+  "count_monthly" : "2",
+  "count_weekly" : "3",
+  "count_daily" : 5,
+  "count_hourly" : "6",
+  "count_boot" : "5",
+  "snapshot_size" : "0",
+  "snapshot_count" : "0",
+  "exclude" : [],
+  "exclude-apps" : []
+}
+EOF
+
+    log_info "Timeshift configuration file created at /etc/timeshift/timeshift.json"
     log_info "Creating inital timeshift snapshot"
     
-    sudo timeshift --create --comments "Initial system setup"
-
-    log_info "Configuring Timeshift to take daily snapshots and retain 5 snapshots"
-
-    sudo jq '.schedule_daily = "true" | .count_daily = 5' /etc/timeshift/timeshift.json | sudo tee /etc/timeshift/timeshift.json > /dev/null
+    sudo timeshift --create --btrfs --comments "Initial system setup"
     
     log_info "Creating pacman hook to create Timeshift snapshot before update"
 
