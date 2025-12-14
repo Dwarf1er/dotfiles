@@ -234,6 +234,7 @@ setup_snapshots() {
   "do_first_run" : "false",
   "btrfs_mode" : "true",
   "include_btrfs_home" : "false",
+  "include_btrfs_home_for_restore": "false",
   "stop_cron_emails" : "true",
   "schedule_monthly" : "false",
   "schedule_weekly" : "false",
@@ -255,7 +256,7 @@ EOF
     log_info "Timeshift configuration file created at /etc/timeshift/timeshift.json"
     log_info "Creating inital timeshift snapshot"
     
-    sudo timeshift --create --btrfs --comments "Initial system setup"
+    sudo timeshift --create --comments "Initial system setup"
     
     log_info "Creating pacman hook to create Timeshift snapshot before update"
 
