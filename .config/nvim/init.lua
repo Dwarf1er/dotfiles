@@ -4,10 +4,10 @@ require("config.filetypes")
 require("config.options")
 require("config.keymap")
 require("config.autocmd")
+require("config.commands")
 
 -- Plugins
 require("plugins.mason-nvim")
-require("plugins.rzls-nvim")
 require("plugins.roslyn-nvim")
 require("plugins.lualine-nvim")
 require("plugins.nvim-treesitter")

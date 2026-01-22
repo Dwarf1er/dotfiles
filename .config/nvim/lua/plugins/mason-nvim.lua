@@ -18,7 +18,6 @@ require("mason-tool-installer").setup({
 		"lua_ls",
 		"html-lsp",
 		"roslyn",
-		"rzls",
 		"netcoredbg",
 		"stylua",
 		"csharpier",
