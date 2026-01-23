@@ -8,6 +8,7 @@ conform.setup({
 		lua = { "stylua" },
 		cs = { "csharpier" },
 		go = { "goimports", "gofumpt" },
+		rust = { "rustfmt" },
 	},
 	formatters = {
 		csharpier = {

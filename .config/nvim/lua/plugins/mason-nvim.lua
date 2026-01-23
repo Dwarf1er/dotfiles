@@ -24,8 +24,6 @@ require("mason-tool-installer").setup({
 		"gopls",
 		"goimports",
 		"gofumpt",
+		"rust-analyzer",
 	},
 })
-
-vim.lsp.config("clangd", {})
-vim.lsp.config("gdscript", {})
