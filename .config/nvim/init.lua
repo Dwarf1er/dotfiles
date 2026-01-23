@@ -16,6 +16,7 @@ require("plugins.telescope-nvim")
 require("plugins.nvim-dap")
 require("plugins.conform-nvim")
 require("plugins.nvim-cmp")
+require("plugins.autoclose-nvim")
 
 -- LSP configuration
 require("config.lsp")
