@@ -12,3 +12,4 @@ PS1='[\u@\h \W]\$ '
 
 fastfetch
 eval "$(starship init bash)"
+eval "$(direnv hook bash)"

@@ -66,7 +66,9 @@ REQUIRED_AUR=(
 
 declare -A OPTIONAL_PACKAGES=(
     ["go"]="Golang programming language [Official]"
+    ["rustup"]="Rust programming language [Official]"
     ["godot"]="Godot game engine [Official]"
+    ["direnv"]="Environment variable loader [Official]"
     ["neovim-nightly-bin"]="Neovim nightly build [AUR]"
     ["steam"]="Steam gaming platform [Official]"
     ["gimp"]="GNU Image Manipulation Program [Official]"
