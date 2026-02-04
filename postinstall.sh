@@ -78,16 +78,18 @@ declare -A OPTIONAL_PACKAGES=(
     ["blender"]="3D creation suite [Official]"
     ["kdenlive"]="Video editor [Official]"
     ["freecad"]="Parametric 3D CAD modeler [Official]"
-    ["orca-slicer-bin"]="3D printer slicer [AUR]"
     ["libreoffice-fresh"]="Office suite [Official]"
-    ["brave-bin"]="Brave browser [AUR]"
     ["signal-desktop"]="Signal messenger [Official]"
-    ["vesktop"]="Vesktop discord client [AUR]"
     ["tlp"]="TLP battery optimization [Official]"
     ["tlp-rdw"]="Radio devices optimization [Official]"
     ["smartmontools"]="Disk optimization [Official]"
     ["ethtool"]="Ethernet optimization [Official]"
     ["homebank"]="Financial planning [Official]"
+    ["orca-slicer-bin"]="3D printer slicer [AUR]"
+    ["brave-bin"]="Brave browser [AUR]"
+    ["vesktop"]="Vesktop discord client [AUR]"
+    ["protonup-qt"]="GE Proton version manager [AUR]"
+    ["python-uv"]="Python uv tool [AUR]"
 )
 
 install_packages() {
