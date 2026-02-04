@@ -18,7 +18,8 @@ REQUIRED_OFFICIAL=(
     hyprland
     archlinux-xdg-menu
     xdg-desktop-portal-hyprland
-    xdg-desktop-portal-gtk
+    grim
+    slurp
     ly
     qt5-wayland
     qt6-wayland
