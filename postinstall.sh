@@ -18,6 +18,7 @@ REQUIRED_OFFICIAL=(
     hyprland
     archlinux-xdg-menu
     xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
     grim
     slurp
     ly
