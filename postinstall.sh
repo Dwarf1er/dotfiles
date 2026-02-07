@@ -292,6 +292,33 @@ EOF
     log_info "GRUB configuration updated to include Timeshift snapshots."
 }
 
+setup_via_udev() {
+    local RULE_PATH="/etc/udev/rules.d/99-via.rules"
+
+    log_info "Setting up VIA udev rules"
+
+    if [ ! -f "$RULE_PATH" ]; then
+        log_info "Installing VIA udev rule"
+        sudo tee "$RULE_PATH" > /dev/null << 'EOF'
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="input", TAG+="uaccess"
+EOF
+    else
+        log_info "VIA udev rule already exists"
+    fi
+
+    if groups "$USER" | grep -qw input; then
+        log_info "User '$USER' already in input group"
+    else
+        log_info "Adding user '$USER' to input group"
+        sudo usermod -aG input "$USER"
+        log_warn "You must log out or reboot for group changes to take effect"
+    fi
+
+    log_info "Reloading udev rules"
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger --subsystem-match=hidraw
+}
+
 main() {
     [ "$EUID" -eq 0 ] && { log_error "Do not run this script as root!"; exit 1; }
 
@@ -331,6 +358,7 @@ main() {
         systemctl --user start pipewire wireplumber
 
         select_optional_packages
+        setup_via_udev
     fi
 
     setup_dotfiles "$git_repo_url"
