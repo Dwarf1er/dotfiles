@@ -17,6 +17,7 @@ require("plugins.nvim-dap")
 require("plugins.conform-nvim")
 require("plugins.nvim-cmp")
 require("plugins.autoclose-nvim")
+require("plugins.markdown-toc-nvim")
 
 -- LSP configuration
 require("config.lsp")

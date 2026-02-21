@@ -4,6 +4,7 @@ require("nvim-treesitter.configs").setup({
 	build = ":TSUpdate",
 	ensure_installed = {
 		"lua",
+		"markdown",
 		"c_sharp",
 		"razor",
 		"html",
