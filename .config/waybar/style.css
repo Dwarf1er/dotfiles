@@ -165,11 +165,11 @@ window#waybar {
 }
 
 /* Language/Keyboard layout */
-#language {
+#custom-fcitx5{
     color: @nord7;
 }
 
-#language:hover {
+#custom-fcitx5:hover {
     border: 1px solid @nord7;
 }
 

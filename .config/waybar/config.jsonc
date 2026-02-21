@@ -5,8 +5,7 @@
   "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["hyprland/language", "bluetooth", "network", "wireplumber", "battery", "custom/power"],
-
+  "modules-right": ["custom/fcitx5", "bluetooth", "network", "wireplumber", "battery", "custom/power"],
 
     "hyprland/workspaces": {
         "on-click": "activate",
@@ -32,6 +31,14 @@
       }
     }
   },
+
+    "custom/fcitx5": {
+      "exec": "~/.config/waybar/scripts/fcitx5-status.sh",
+      "interval": 1,
+      "return-type": "json",
+      "format": "{text}",
+      "on-click": "fcitx5-remote -t"
+    },
 
   "battery": {
     "format": "{icon}  {capacity}%",
@@ -74,13 +81,6 @@
     "on-click": "pwvucontrol",
     "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
     "tooltip-format": "{volume}%"
-  },
-
-  "hyprland/language": {
-      "format": " {}",
-      "format-en": "EN",
-      "format-fr": "FR",
-      "format-kr": "KR"
   },
 
   "bluetooth": {

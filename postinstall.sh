@@ -42,6 +42,8 @@ REQUIRED_OFFICIAL=(
     noto-fonts
     noto-fonts-emoji
     noto-fonts-cjk
+    fcitx5-im
+    fcitx5-hangul
     wl-clipboard
     mpv
     gwenview
