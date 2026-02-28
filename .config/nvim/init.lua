@@ -18,6 +18,8 @@ require("plugins.conform-nvim")
 require("plugins.nvim-cmp")
 require("plugins.autoclose-nvim")
 require("plugins.markdown-toc-nvim")
+require("plugins.presenting-nvim")
+require("plugins.snacks-nvim")
 
 -- LSP configuration
 require("config.lsp")
