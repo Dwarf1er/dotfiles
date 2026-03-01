@@ -47,6 +47,10 @@ end
 Presenting.setup({
 	cmd = { "Presenting" },
 	options = { width = 120 },
+	separator = {
+		markdown = "^---+",
+	},
+	keep_separator = false,
 	keymaps = {
 		["n"] = Presenting.next,
 		["p"] = Presenting.prev,
