@@ -25,5 +25,7 @@ require("mason-tool-installer").setup({
 		"goimports",
 		"gofumpt",
 		"rust-analyzer",
+		"gdtoolkit",
+		"gdscript-formatter",
 	},
 })

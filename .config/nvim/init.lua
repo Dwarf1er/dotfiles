@@ -5,6 +5,7 @@ require("config.options")
 require("config.keymap")
 require("config.autocmd")
 require("config.commands")
+require("config.godot")
 
 -- Plugins
 require("plugins.mason-nvim")

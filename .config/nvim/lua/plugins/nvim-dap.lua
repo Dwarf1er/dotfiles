@@ -31,3 +31,20 @@ vim.keymap.set("n", "<C-S-F5>", dap.restart, {})
 vim.keymap.set("n", "<F11>", dap.step_into, {})
 vim.keymap.set("n", "<F10>", dap.step_over, {})
 vim.keymap.set("n", "<S-F11>", dap.step_out, {})
+
+dap.adapters.godot = {
+	type = "server",
+	host = "127.0.0.1",
+	port = 6007,
+}
+
+dap.configurations.gdscript = {
+	{
+		name = "Launch scene",
+		type = "godot",
+		request = "launch",
+		project = "${workspaceFolder}",
+		launch_game_instance = false,
+		launch_scene = false,
+	},
+}

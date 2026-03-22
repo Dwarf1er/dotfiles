@@ -8,6 +8,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "gdscript",
+	callback = function()
+		vim.lsp.start({
+			name = "godot",
+			cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+			root_dir = vim.fs.root(0, { "project.godot" }),
+		})
+	end,
+})
+
 -- Diagnostics
 vim.diagnostic.config({
 	virtual_lines = {
