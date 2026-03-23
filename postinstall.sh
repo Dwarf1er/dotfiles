@@ -89,6 +89,7 @@ declare -A OPTIONAL_PACKAGES=(
     ["smartmontools"]="Disk optimization [Official]"
     ["ethtool"]="Ethernet optimization [Official]"
     ["homebank"]="Financial planning [Official]"
+    ["presenterm"]="Presentations in your terminal [Official]"
     ["orca-slicer-bin"]="3D printer slicer [AUR]"
     ["brave-bin"]="Brave browser [AUR]"
     ["vesktop"]="Vesktop discord client [AUR]"
