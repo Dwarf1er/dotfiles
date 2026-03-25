@@ -1,0 +1,3 @@
+bindings:
+  next: ["l", "j", "<right>", "<page_up>", "<up>", " "]
+  previous: ["h", "k", "<left>", "<page_down>", "<down>"]
