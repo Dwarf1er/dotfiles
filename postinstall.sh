@@ -52,6 +52,11 @@ REQUIRED_OFFICIAL=(
     inotify-tools
     timeshift
     grub-btrfs
+    vulkan-radeon
+    lib32-vulkan-radeon
+    mesa
+    lib32-mesa
+    vulkan-tools
 )
 
 REQUIRED_AUR=(
