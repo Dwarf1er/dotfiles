@@ -14,3 +14,6 @@ export PATH=$PATH:$HOME/go/bin
 fastfetch
 eval "$(starship init bash)"
 eval "$(direnv hook bash)"
+
+# uv
+export PATH="/home/iuse/.local/bin:$PATH"

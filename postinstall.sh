@@ -14,92 +14,92 @@ config() {
 }
 
 REQUIRED_OFFICIAL=(
-    openssh
-    hyprland
+    adw-gtk-theme
     archlinux-xdg-menu
-    xdg-desktop-portal-hyprland
-    xdg-desktop-portal-gtk
+    brightnessctl
+    dolphin
+    fastfetch
+    fcitx5-hangul
+    fcitx5-im
+    git
     grim
-    slurp
+    grub-btrfs
+    gwenview
+    hyprland
+    inotify-tools
+    kitty
+    lib32-mesa
+    lib32-vulkan-radeon
     ly
+    mesa
+    mpv
+    networkmanager
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    openssh
+    pipewire
+    pipewire-alsa
+    pipewire-pulse
+    playerctl
     qt5-wayland
     qt6-wayland
     qt6ct
-    adw-gtk-theme
-    wireplumber
-    pipewire
-    pipewire-pulse
-    pipewire-alsa
-    networkmanager
-    kitty
-    dolphin
-    wofi
-    brightnessctl
-    playerctl
-    git
-    ttf-font-awesome
-    ttf-d2coding-nerd
-    noto-fonts
-    noto-fonts-emoji
-    noto-fonts-cjk
-    fcitx5-im
-    fcitx5-hangul
-    wl-clipboard
-    mpv
-    gwenview
+    slurp
     starship
-    fastfetch
-    inotify-tools
     timeshift
-    grub-btrfs
+    ttf-d2coding-nerd
+    ttf-font-awesome
     vulkan-radeon
-    lib32-vulkan-radeon
-    mesa
-    lib32-mesa
     vulkan-tools
+    wireplumber
+    wl-clipboard
+    wofi
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
 )
 
 REQUIRED_AUR=(
-    librewolf-bin
-    hyprshot
-    hyprlock
-    waybar
-    mako
-    wlogout
     hypridle
+    hyprlock
     hyprpaper
     hyprpicker
-    pwvucontrol
+    hyprshot
+    librewolf-bin
+    mako
     nmgui-bin
+    pwvucontrol
+    waybar
+    wlogout
 )
 
 declare -A OPTIONAL_PACKAGES=(
-    ["go"]="Golang programming language [Official]"
-    ["rustup"]="Rust programming language [Official]"
-    ["godot"]="Godot game engine [Official]"
-    ["direnv"]="Environment variable loader [Official]"
-    ["neovim-nightly-bin"]="Neovim nightly build [AUR]"
-    ["steam"]="Steam gaming platform [Official]"
-    ["gimp"]="GNU Image Manipulation Program [Official]"
-    ["inkscape"]="Vector graphics editor [Official]"
-    ["obs-studio"]="Open Broadcaster Software [Official]"
     ["audacity"]="Audio editor [Official]"
     ["blender"]="3D creation suite [Official]"
-    ["kdenlive"]="Video editor [Official]"
-    ["freecad"]="Parametric 3D CAD modeler [Official]"
-    ["libreoffice-fresh"]="Office suite [Official]"
-    ["signal-desktop"]="Signal messenger [Official]"
-    ["tlp"]="TLP battery optimization [Official]"
-    ["tlp-rdw"]="Radio devices optimization [Official]"
-    ["smartmontools"]="Disk optimization [Official]"
-    ["ethtool"]="Ethernet optimization [Official]"
-    ["homebank"]="Financial planning [Official]"
-    ["presenterm"]="Presentations in your terminal [Official]"
-    ["orca-slicer-bin"]="3D printer slicer [AUR]"
     ["brave-bin"]="Brave browser [AUR]"
-    ["vesktop"]="Vesktop discord client [AUR]"
+    ["direnv"]="Environment variable loader [Official]"
+    ["ethtool"]="Ethernet optimization [Official]"
+    ["freecad"]="Parametric 3D CAD modeler [Official]"
+    ["gimp"]="GNU Image Manipulation Program [Official]"
+    ["go"]="Golang programming language [Official]"
+    ["godot"]="Godot game engine [Official]"
+    ["homebank"]="Financial planning [Official]"
+    ["inkscape"]="Vector graphics editor [Official]"
+    ["kdenlive"]="Video editor [Official]"
+    ["libreoffice-fresh"]="Office suite [Official]"
+    ["neovim"]="Neovim stable [Official]"
+    ["obs-studio"]="Open Broadcaster Software [Official]"
+    ["orca-slicer-bin"]="3D printer slicer [AUR]"
+    ["presenterm"]="Presentations in your terminal [Official]"
     ["protonup-qt"]="GE Proton version manager [AUR]"
     ["python-uv"]="Python uv tool [AUR]"
+    ["rustup"]="Rust programming language [Official]"
+    ["signal-desktop"]="Signal messenger [Official]"
+    ["smartmontools"]="Disk optimization [Official]"
+    ["steam"]="Steam gaming platform [Official]"
+    ["tlp"]="TLP battery optimization [Official]"
+    ["tlp-rdw"]="Radio devices optimization [Official]"
+    ["vesktop"]="Vesktop discord client [AUR]"
 )
 
 install_packages() {
