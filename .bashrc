@@ -17,3 +17,6 @@ eval "$(direnv hook bash)"
 
 # uv
 export PATH="/home/iuse/.local/bin:$PATH"
+
+# Add .NET Core SDK tools
+export PATH="$PATH:/home/iuse/.dotnet/tools"
