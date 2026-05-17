@@ -20,3 +20,5 @@ export PATH="/home/iuse/.local/bin:$PATH"
 
 # Add .NET Core SDK tools
 export PATH="$PATH:/home/iuse/.dotnet/tools"
+. "$HOME/.config/godotenv/env" # Added by GodotEnv
+

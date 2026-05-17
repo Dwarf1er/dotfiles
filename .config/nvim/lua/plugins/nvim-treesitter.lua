@@ -42,3 +42,5 @@ vim.api.nvim_create_autocmd("PackChanged", {
 		end
 	end,
 })
+
+vim.treesitter.query.set("markdown", "injections", "")
