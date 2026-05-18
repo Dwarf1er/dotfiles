@@ -2,8 +2,11 @@
 ---- MONITORS ----
 ------------------
 
+local mainMonitor = "desc:Samsung Electric Company LS27AG30x H4PT800054"
+local secondMonitor = "desc:Samsung Electric Company LS27AG30x H4PT800061"
+
 hl.monitor({
-	output = "desc:Samsung Electric Company LS27AG30x H4PT800054",
+	output = mainMonitor,
 	mode = "1920x1080@143.98",
 	position = "0x0",
 	scale = 1,
@@ -11,7 +14,7 @@ hl.monitor({
 })
 
 hl.monitor({
-	output = "desc:Samsung Electric Company LS27AG30x H4PT800061",
+	output = secondMonitor,
 	mode = "1920x1080@143.98",
 	position = "1920x0",
 	scale = 1,
@@ -140,6 +143,20 @@ hl.config({
 		},
 	},
 })
+
+---------------------------
+---- WORKSPACE RULES ----
+---------------------------
+
+hl.workspace_rule({ workspace = "1", monitor = mainMonitor, default = true })
+hl.workspace_rule({ workspace = "9", monitor = secondMonitor, default = true })
+
+-- Workspaces 1-8 on main monitor, 9-10 on vertical monitor
+for i = 1, 8 do
+	hl.workspace_rule({ workspace = tostring(i), monitor = mainMonitor })
+end
+hl.workspace_rule({ workspace = "9", monitor = secondMonitor })
+hl.workspace_rule({ workspace = "10", monitor = secondMonitor })
 
 ---------------------
 ---- KEYBINDINGS ----
